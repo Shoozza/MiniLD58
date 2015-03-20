@@ -1,6 +1,8 @@
+*.a
 *.dcu
+*.dll
+*.exe
 *.o
 *.ppu
 *.~*
-*.exe
 Backup
