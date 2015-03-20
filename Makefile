@@ -1,5 +1,5 @@
 all:
-	@fpc MiniLD58.dpr -l- -FUobj -FEbin
+	@fpc MiniLD58.dpr -l- -FUobj -FEbin -Fulib/allegro-pas5/lib
 
 delphi:
 	@DCC32 MiniLD58.dpr -l- -Nobj -Ebin -CC
