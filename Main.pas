@@ -15,11 +15,13 @@ uses
 type
   TPlayer = record
     x, y: Integer;
+    w, h: Integer;
     vx, vy: Integer;
   end;
 
   TPad = record
     x, y: Integer;
+    w, h: Integer;
     vx, vy: Integer;
   end;
 
@@ -61,33 +63,34 @@ begin
 
   Player.x := 100;
   Player.y := 100;
+  Player.w := 80;
+  Player.h := Player.w;
   Player.vx := 0;
   Player.vy := 0;
 
   Pad1.x := 0;
   Pad1.y := 0;
+  Pad1.w := 60;
+  Pad1.h := 180;
   Pad1.vx := 0;
   Pad1.vy := 0;
 
-  Pad2.x := 0;
+  Pad2.x := Settings.Width-60;
   Pad2.y := 0;
+  Pad2.w := 60;
+  Pad2.h := 180;
   Pad2.vx := 0;
   Pad2.vy := 0;
 end;
 
 procedure DrawPlayer(var Player: TPlayer);
-const
-  SIZE = 80;
 begin
-  al_draw_filled_rectangle(Player.x, Player.y, Player.x+SIZE, Player.y+SIZE, al_map_rgb(255, 255, 255));
+  al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, al_map_rgb(255, 255, 255));
 end;
 
 procedure DrawPad(var Pad: TPad);
-const
-  SIZE_X = 60;
-  SIZE_Y = 3*60;
 begin
-  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+SIZE_X, Pad.y+SIZE_Y, al_map_rgb(255,0,0));
+  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+Pad.w, Pad.y+Pad.h, al_map_rgb(255,0,0));
 end;
 
 procedure Draw;
