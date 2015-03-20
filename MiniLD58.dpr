@@ -1,9 +1,5 @@
 program miniLD58;
 
-{$IFNDEF FPC}
-{$APPLICATION CONSOLE}
-{$ENDIF}
-
 uses
   Main;
 
