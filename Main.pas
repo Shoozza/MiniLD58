@@ -7,6 +7,8 @@ procedure Run;
 implementation
 
 uses
+  SysUtils,
+  IniFiles,
   Allegro5,
   al5primitives;
 
@@ -21,17 +23,29 @@ type
     vx, vy: Integer;
   end;
 
+  TSettings = record
+    Width, Height: Integer;
+  end;
+
 var
   Display: ALLEGRO_DISPLAYptr;
   Queue: ALLEGRO_EVENT_QUEUEptr;
   Timer: ALLEGRO_TIMERptr;
   Player: TPlayer;
   Pad1, Pad2: TPad;
+  Settings: TSettings;
+  Ini: TMemIniFile;
 
 procedure Init;
 begin
+  SetCurrentDir(ExtractFilePath(ParamStr(0)));
+  Ini := TMemIniFile.Create('config.ini');
+
+  Settings.Width := Ini.ReadInteger('GENERAL', 'Screen_Width', 1920);
+  Settings.Height := Ini.ReadInteger('GENERAL', 'Screen_Height', 1080);
+
   al_init;
-  Display := al_create_display(1920, 1080);
+  Display := al_create_display(Settings.Width, Settings.Height);
 
   al_install_keyboard;
 
@@ -142,6 +156,9 @@ end;
 
 procedure Clean;
 begin
+  Ini.WriteInteger('GENERAL', 'Screen_Width', Settings.Width);
+  Ini.WriteInteger('GENERAL', 'Screen_Height', Settings.Height);
+  Ini.Free;
 end;
 
 procedure Run;
