@@ -11,3 +11,8 @@ clean:
 	@rm -f obj/*.*
 	@touch bin/.gitkeep
 	@touch obj/.gitkeep
+
+try: all run
+
+run:
+	@bin/MiniLD58
