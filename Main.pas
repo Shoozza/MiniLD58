@@ -18,7 +18,7 @@ type
     vx, vy: Integer;
   end;
 
-  TPad= record
+  TPad = record
     x, y: Integer;
     vx, vy: Integer;
   end;
@@ -76,18 +76,28 @@ begin
 end;
 
 procedure DrawPlayer(var Player: TPlayer);
+const
+  SIZE = 80;
 begin
-  al_draw_filled_rectangle(Player.x, Player.y, Player.x+10, Player.y+10, al_map_rgb(255, 255, 255));
+  al_draw_filled_rectangle(Player.x, Player.y, Player.x+SIZE, Player.y+SIZE, al_map_rgb(255, 255, 255));
 end;
 
 procedure DrawPad(var Pad: TPad);
+const
+  SIZE_X = 60;
+  SIZE_Y = 3*60;
 begin
-  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+5, Pad.y+20, al_map_rgb(255,0,0));
+  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+SIZE_X, Pad.y+SIZE_Y, al_map_rgb(255,0,0));
 end;
 
 procedure Draw;
+const
+  SIZE = 60;
 begin
   al_clear_to_color(al_map_rgb(0, 0, 0));
+
+  al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
+    Settings.Height, al_map_rgb(128, 128, 128));
 
   DrawPlayer(Player);
   DrawPad(Pad1);
