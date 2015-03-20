@@ -2,6 +2,7 @@
 *.dcu
 *.dll
 *.exe
+*.ini
 *.o
 *.ppu
 *.~*
