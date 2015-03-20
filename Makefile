@@ -1,5 +1,8 @@
 all:
-	@fpc MiniLD58.dpr -FUobj -FEbin
+	@fpc MiniLD58.dpr -l- -FUobj -FEbin
+
+delphi:
+	@DCC32 MiniLD58.dpr -l- -Nobj -Ebin -CC
 
 clean:
 	@rm -f *.o
