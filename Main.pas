@@ -33,20 +33,25 @@ end;
 
 procedure Loop;
 var
-  IsRunning: boolean;
+  IsRunning, ShouldDraw: boolean;
   Event: ALLEGRO_EVENT;
 begin
   IsRunning := True;
+  ShouldDraw := True;
 
-  al_rest(1);
   while IsRunning do
   begin
+    if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
+      Draw;
+
     al_wait_for_event(Queue, Event);
 
-    if event._type = ALLEGRO_EVENT_DISPLAY_CLOSE then
-      IsRunning := False;
-
-    Draw;
+    case Event._type of
+      ALLEGRO_EVENT_DISPLAY_CLOSE:
+        IsRunning := False;
+      ALLEGRO_EVENT_TIMER:
+        ShouldDraw := True;
+    end;
   end;
 end;
 
