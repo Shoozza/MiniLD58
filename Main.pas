@@ -74,7 +74,7 @@ begin
   RightPadColor := al_map_rgb(230,  98, 98);
   RightPadShadeColor := al_map_rgb(251, 185, 185);
 
-  Player.x := 100;
+  Player.x := -100;
   Player.y := 100;
   Player.w := 80;
   Player.h := Player.w;
@@ -287,6 +287,7 @@ begin
   begin
     Player.vx := -Player.vx;
     Player.x := Pad1.x+Pad1.w;
+    Pad1.vy := Pad1.vy + 1;
   end
   else if (Player.x+Player.w >= Pad2.x) and (Player.x <= Pad2.x+Pad2.w) and
     ((Player.y+Player.h >= Pad2.y) and (Player.y+Player.h <= Pad2.y+Pad2.h) or
@@ -294,6 +295,17 @@ begin
   begin
     Player.vx := -Player.vx;
     Player.x := Pad2.x-Player.w;
+    Pad2.vy := Pad2.vy - 1;
+  end;
+
+  // check for lost game
+  if (Player.x+Player.w < 0) or (Player.x > Settings.Width) then
+  begin
+    // lost
+    Player.x := Settings.Width div 2 - Player.w div 2;
+    Player.y := Settings.Height div 2 - Player.h div 2;
+    Player.vx := 0;
+    Player.vy := 10;
   end;
 end;
 
