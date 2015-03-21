@@ -35,6 +35,7 @@ type
     w, h: Integer;
     vx, vy: Integer;
     Active: Integer;
+    Shake, ShakeX, ShakeY: Integer;
   end;
 
   TSettings = record
@@ -149,6 +150,7 @@ begin
     Coins[I].Active := 0;
     Coins[I].w := 80;
     Coins[I].h := 80;
+    Coins[I].Shake := 0;
   end;
 
   BestScore := 0;
@@ -414,11 +416,18 @@ begin
     end;
   end;
 
-  al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, CoinShadeColor);
+  al_draw_filled_triangle(
+    x1+Coin.ShakeX, y1+Coin.ShakeY,
+    x2+Coin.ShakeX, y2+Coin.ShakeY,
+    x3+Coin.ShakeX, y3+Coin.ShakeY, CoinShadeColor);
   if Coin.Active > 30 then
-    al_draw_filled_rectangle(Coin.x, Coin.y, Coin.x+Coin.w, Coin.y+Coin.h, CoinColor)
+    al_draw_filled_rectangle(
+      Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
+      Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, CoinColor)
   else
-    al_draw_filled_rectangle(Coin.x, Coin.y, Coin.x+Coin.w, Coin.y+Coin.h, CoinColor);
+    al_draw_filled_rectangle(
+      Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
+      Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, CoinColor);
 end;
 
 procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
@@ -461,7 +470,21 @@ begin
   for I := 1 to MAX_COINS do
   begin
     if Coins[I].Active <> 0 then
+    begin
+      if Coins[I].Shake > 0 then
+      begin
+        Dec(Coins[I].Shake);
+        Coins[I].ShakeX := random(35);
+        Coins[I].ShakeY := random(35);
+      end
+      else if Shake = 0 then
+      begin
+        Dec(Coins[I].Shake);
+        Coins[I].ShakeX := 0;
+        Coins[I].ShakeY := 0;
+      end;
       DrawCoin(Coins[I], CoinColor, CoinShadeColor);
+    end;
   end;
   DrawPlayer(Player);
 
@@ -494,6 +517,7 @@ begin
     Coins[N].y := random(Settings.Height div 2) + Settings.Height div 4;
     Coins[N].vx := random(3) - 2;
     Coins[N].vy := random(9) - 5;
+    Coins[N].Shake := 0;
   end;
 
   // move
@@ -522,6 +546,21 @@ begin
         al_play_sample(PointSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
       end;
 
+      if Coins[I].Active > 0 then
+      begin
+        if Coins[I].y+Coins[I].h >= Settings.Height then
+        begin
+          Coins[I].Shake := 20;
+          Coins[I].vy := -Coins[I].vy;
+          Coins[I].y := Settings.Height-Coins[I].h;
+        end
+        else if Coins[I].y <= 0 then
+        begin
+          Coins[I].Shake := 20;
+          Coins[I].vy := -Coins[I].vy;
+          Coins[I].y := 0;
+        end;
+      end;
     end;
   end;
 
