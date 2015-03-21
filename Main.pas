@@ -189,8 +189,8 @@ begin
   Pad1.vx := 0;
   Pad1.vy := 4;
 
-  Pad2.x := INTERNAL_WIDTH-60;
-  Pad2.y := INTERNAL_HEIGHT- 180;
+  Pad2.x := INTERNAL_WIDTH - 60;
+  Pad2.y := INTERNAL_HEIGHT - 180;
   Pad2.w := 60;
   Pad2.h := 180;
   Pad2.vx := 0;
@@ -199,9 +199,11 @@ end;
 
 procedure DrawScore;
 begin
-  al_draw_text(Font, al_map_rgb(230, 230, 230), Settings.Width div 4, Settings.Height div 4,
+  al_draw_text(Font, al_map_rgb(230, 230, 230),
+    Settings.Width div 4, Settings.Height div 4,
     ALLEGRO_ALIGN_CENTRE, IntToStr(Score));
-  al_draw_text(Font, al_map_rgb(230, 230, 230), Settings.Width div 4 * 3, Settings.Height div 4,
+  al_draw_text(Font, al_map_rgb(230, 230, 230),
+    Settings.Width div 4 * 3, Settings.Height div 4,
     ALLEGRO_ALIGN_CENTRE, IntToStr(BestScore));
 end;
 
@@ -320,7 +322,8 @@ begin
     (x3+ShakeX) * RatioX, (y3+ShakeY) * RatioY, PlayerShadeColor);
   al_draw_filled_rectangle(
     (Player.x+ShakeX) * RatioX, (Player.y+ShakeY) * RatioY,
-    (Player.x+Player.w+ShakeX) * RatioX, (Player.y+Player.h+ShakeY) * RatioY, PlayerColor);
+    (Player.x+Player.w+ShakeX) * RatioX, (Player.y+Player.h+ShakeY) * RatioY,
+    PlayerColor);
 end;
 
 procedure DrawCoin(var Coin: TCoin);
@@ -442,11 +445,13 @@ begin
     if Coin.Active > 30 then
       al_draw_filled_rectangle(
         (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
-        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, HardCoinColor)
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY,
+        HardCoinColor)
     else
       al_draw_filled_rectangle(
         (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
-        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, HardCoinShadeColor);
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY,
+        HardCoinShadeColor);
   end
   else
   begin
@@ -458,15 +463,18 @@ begin
     if Coin.Active > 30 then
       al_draw_filled_rectangle(
         (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
-        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, CoinColor)
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY,
+        CoinColor)
     else
       al_draw_filled_rectangle(
         (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
-        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, CoinShadeColor);
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY,
+        CoinShadeColor);
   end;
 end;
 
-procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
+procedure DrawPad(var Pad: TPad;
+  var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
 begin
   al_draw_filled_rectangle(
     Pad.x*RatioX, Pad.y*RatioY,
@@ -501,8 +509,8 @@ begin
     ShakeY := 0;
   end;
 
-  al_draw_filled_rectangle(Settings.Width/2-SIZE*RatioX, 0, Settings.Width/2+SIZE*RatioX,
-    Settings.Height, BackgroundShadeColor);
+  al_draw_filled_rectangle(Settings.Width/2-SIZE*RatioX, 0,
+    Settings.Width/2+SIZE*RatioX, Settings.Height, BackgroundShadeColor);
 
   DrawPad(Pad1, LeftPadColor, LeftPadShadeColor);
   DrawPad(Pad2, RightPadColor, RightPadShadeColor);
@@ -533,8 +541,10 @@ begin
     al_draw_filled_rectangle(0, 0,
       Settings.Width, Settings.Height,
       al_map_rgba(0, 0, 0, 40));
-    al_draw_filled_rectangle(Settings.Width / 20 * RatioX, Settings.Height / 20 * RatioY,
-      Settings.Width - Settings.Width / 20 * RatioX, Settings.Height - Settings.Height / 20 * RatioX,
+    al_draw_filled_rectangle(Settings.Width / 20 * RatioX,
+      Settings.Height / 20 * RatioY,
+      Settings.Width - Settings.Width / 20 * RatioX,
+      Settings.Height - Settings.Height / 20 * RatioX,
       al_map_rgba(0, 0, 0, 40));
   end;
 
@@ -579,20 +589,24 @@ begin
       Coins[I].y := Coins[I].y + Coins[I].vy;
 
       Dec(Coins[I].Active);
-      if (Player.x+Player.w >= Coins[I].x) and (Player.x <= Coins[I].x+Coins[i].w) and
-       (Player.y+Player.h >= Coins[I].y) and (Player.y <= Coins[I].y+Coins[I].h) then
+      if (Player.x+Player.w >= Coins[I].x) and
+        (Player.x <= Coins[I].x+Coins[i].w) and
+        (Player.y+Player.h >= Coins[I].y) and
+        (Player.y <= Coins[I].y+Coins[I].h) then
       begin
         if Coins[I].Hits = 1 then
         begin
           Coins[I].Active := 0;
           Inc(Score);
-          al_play_sample(PointSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
+          al_play_sample(PointSound, 1.0, 0.0, 1.0,
+            ALLEGRO_PLAYMODE_ONCE, nil);
         end
         else
         begin
           Dec(Coins[I].Hits);
           Inc(Score);
-          al_play_sample(LeftPadSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
+          al_play_sample(LeftPadSound, 1.0, 0.0, 1.0,
+            ALLEGRO_PLAYMODE_ONCE, nil);
           Player.vx := -Player.vx;
           Player.vy := -Player.vy;
         end;
@@ -792,14 +806,13 @@ begin
   al_clear_to_color(al_map_rgb(164, 164, 164));
   C := Counter / 120.0;
   R := Settings.Width / al_get_bitmap_width(IntroImage);
-  al_draw_tinted_scaled_bitmap(IntroImage, al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
+  al_draw_tinted_scaled_bitmap(IntroImage,
+    al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
     0, 0, al_get_bitmap_width(IntroImage), al_get_bitmap_height(IntroImage),
     (Settings.Width   - 0.25*R*al_get_bitmap_width(IntroImage))  / 2.0,
     (Settings.Height  - 0.25*R*al_get_bitmap_height(IntroImage)) / 2.0,
-    //(Settings.Width - al_get_bitmap_width(IntroImage)*4) / 2.0,
-    //(Settings.Height - al_get_bitmap_height(IntroImage)*4) / 2.0,
-    //al_get_bitmap_width(IntroImage)*4, al_get_bitmap_height(IntroImage)*4, 0);
-    0.25*R*al_get_bitmap_width(IntroImage), 0.25*R*al_get_bitmap_height(IntroImage), 0);
+    0.25*R*al_get_bitmap_width(IntroImage),
+    0.25*R*al_get_bitmap_height(IntroImage), 0);
   al_flip_display;
 end;
 
@@ -814,7 +827,6 @@ begin
 
   LoadIntro;
 
-  //al_play_sample(IntroSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
   while ShowIntro > -30 do
   begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
@@ -873,13 +885,15 @@ begin
               if (not Pause) and (Player.vx = 0) then
               begin
                 Player.vx := 10;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil)
               end;
             ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT:
               if (not Pause) and (Player.vx = 0) then
               begin
                 Player.vx := -10;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil)
               end;
             ALLEGRO_KEY_P:
               Pause := not Pause;
