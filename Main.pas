@@ -787,18 +787,19 @@ end;
 
 procedure DrawIntro(Counter: Integer);
 var
-  C: Single;
+  C, R: Single;
 begin
   al_clear_to_color(al_map_rgb(164, 164, 164));
   C := Counter / 120.0;
+  R := Settings.Width / al_get_bitmap_width(IntroImage);
   al_draw_tinted_scaled_bitmap(IntroImage, al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
     0, 0, al_get_bitmap_width(IntroImage), al_get_bitmap_height(IntroImage),
-    (Settings.Width - al_get_bitmap_width(IntroImage)*4) / 2.0,
-    (Settings.Height - al_get_bitmap_height(IntroImage)*4) / 2.0,
-    al_get_bitmap_width(IntroImage)*4, al_get_bitmap_height(IntroImage)*4, 0);
-  {al_draw_tinted_bitmap(IntroImage, al_map_rgba(255, 255, 225, Trunc(Counter / 120.0 * 255)),
-    (Settings.Width - al_get_bitmap_width(IntroImage)) / 2.0,
-    (Settings.Height - al_get_bitmap_height(IntroImage)) / 2.0, 0);}
+    (Settings.Width   - 0.25*R*al_get_bitmap_width(IntroImage))  / 2.0,
+    (Settings.Height  - 0.25*R*al_get_bitmap_height(IntroImage)) / 2.0,
+    //(Settings.Width - al_get_bitmap_width(IntroImage)*4) / 2.0,
+    //(Settings.Height - al_get_bitmap_height(IntroImage)*4) / 2.0,
+    //al_get_bitmap_width(IntroImage)*4, al_get_bitmap_height(IntroImage)*4, 0);
+    0.25*R*al_get_bitmap_width(IntroImage), 0.25*R*al_get_bitmap_height(IntroImage), 0);
   al_flip_display;
 end;
 
