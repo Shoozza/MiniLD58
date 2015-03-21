@@ -69,6 +69,7 @@ var
   BestScore: Integer;
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
+  InputFix: Integer;
 
 procedure Init;
 var
@@ -159,6 +160,7 @@ begin
   KeyW := False;
   KeyS := False;
   Pause := False;
+  InputFix := 3;
 
   Shake := 0;
   ShakeX := 0;
@@ -665,24 +667,63 @@ begin
   if Pause then
     Exit;
 
+{  Dec(InputFix);
+  if InputFix > 0 then
+    Exit;
+  InputFix := 3;
+}
+
   if KeyW then
   begin
     if Player.vy > 0 then
-      Player.vy := Trunc(Player.vy/1.5)
-    else if Player.vy < 0 then
-      Player.vy := Trunc(Player.vy*1.5)
+    begin
+      if Player.vy < 2 then
+        Player.vy := Trunc(Player.vy/2)
+      else if Player.vy < 10 then
+        Player.vy := Trunc(Player.vy/1.5)
+      else
+        Player.vy := Trunc(Player.vy/1.1);
+    end
+    else if Player.vy < 0  then
+    begin
+      if Player.vy > -2 then
+        Player.vy := Trunc(Player.vy*2)
+      else if Player.vy > -10 then
+        Player.vy := Trunc(Player.vy*1.5)
+      else
+        Player.vy := Trunc(Player.vy*1.1);
+
+    end
     else
-      Player.vy := -3;
+    begin
+      Player.vy := -1;
+    end;
   end;
 
   if KeyS then
   begin
     if Player.vy > 0 then
-      Player.vy := Trunc(Player.vy*1.5)
+    begin
+      if Player.vy < 2 then
+        Player.vy := Trunc(Player.vy*2)
+      else if Player.vy < 10 then
+        Player.vy := Trunc(Player.vy*1.5)
+      else
+        Player.vy := Trunc(Player.vy*1.1);
+    end
     else if Player.vy < 0 then
-      Player.vy := Trunc(Player.vy/1.5)
+    begin
+      if Player.vy > -2 then
+        Player.vy := Trunc(Player.vy/2)
+      else if Player.vy > -10 then
+        Player.vy := Trunc(Player.vy/1.5)
+      else
+        Player.vy := Trunc(Player.vy/1.1);
+    end
     else
-      Player.vy := 3;
+    begin
+      Player.vy := 1;
+    end;
   end;
 
 end;
