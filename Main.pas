@@ -45,6 +45,9 @@ var
     RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
   WallSound, LeftPadSound, RightPadSound,
     LostSound, SpawnSound, PointSound: ALLEGRO_SAMPLEptr;
+  StartUpDelay: Integer;
+  Shake: Integer;
+  ShakeX, ShakeY: Single;
 
 procedure Init;
 begin
@@ -57,6 +60,7 @@ begin
   al_init;
   Display := al_create_display(Settings.Width, Settings.Height);
 
+  Randomize;
   al_install_keyboard;
   al_init_acodec_addon;
   if not al_install_audio then
@@ -99,7 +103,7 @@ begin
     Writeln('Error: loading ' + GetCurrentDir + '\point.wav');
 
   BackgroundColor := al_map_rgb(255, 255, 255);
-  BackgroundShadeColor := al_map_rgb(200, 200, 200);
+  BackgroundShadeColor := al_map_rgb(235, 235, 235);
   PlayerColor := al_map_rgb(248, 180, 93);
   PlayerShadeColor := al_map_rgb(255, 222, 178);
   LeftPadColor := al_map_rgb(51, 139, 209);
@@ -107,6 +111,9 @@ begin
   RightPadColor := al_map_rgb(230,  98, 98);
   RightPadShadeColor := al_map_rgb(251, 185, 185);
 
+  Shake := 0;
+  ShakeX := 0;
+  ShakeX := 0;
   Player.x := -100;
   Player.y := 100;
   Player.w := 80;
@@ -238,8 +245,8 @@ begin
     end;
   end;
 
-  al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, PlayerShadeColor);
-  al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, PlayerColor);
+  al_draw_filled_triangle(x1+ShakeX, y1+ShakeY, x2+ShakeX, y2+ShakeY, x3+ShakeX, y3+ShakeY, PlayerShadeColor);
+  al_draw_filled_rectangle(Player.x+ShakeX, Player.y+ShakeY, Player.x+Player.w+ShakeX, Player.y+Player.h+ShakeY, PlayerColor);
 end;
 
 procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
@@ -257,6 +264,12 @@ const
 begin
   al_clear_to_color(BackgroundColor);
 
+  if Shake > 0 then
+  begin
+    Dec(Shake);
+    ShakeX := random(35);
+    ShakeY := random(35);
+  end;
   al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
     Settings.Height, BackgroundShadeColor);
 
@@ -304,12 +317,14 @@ begin
 
   if Player.y+Player.h >= Settings.Height then
   begin
+    Shake := 10;
     Player.vy := -Player.vy;
     Player.y := Settings.Height-Player.h;
     al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if Player.y <= 0 then
   begin
+    Shake := 10;
     Player.vy := -Player.vy;
     Player.y := 0;
     al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
@@ -320,6 +335,7 @@ begin
     ((Player.y+Player.h >= Pad1.y) and (Player.y+Player.h <= Pad1.y+Pad1.h) or
     (Player.y >= Pad1.y) and (Player.y <= Pad1.y+Pad1.h)) then
   begin
+    Shake := 5;
     Player.vx := -Player.vx;
     Player.x := Pad1.x+Pad1.w;
     Pad1.vy := Pad1.vy + 1;
@@ -329,6 +345,7 @@ begin
     ((Player.y+Player.h >= Pad2.y) and (Player.y+Player.h <= Pad2.y+Pad2.h) or
     (Player.y >= Pad2.y) and (Player.y <= Pad2.y+Pad2.h)) then
   begin
+    Shake := 5;
     Player.vx := -Player.vx;
     Player.x := Pad2.x-Player.w;
     Pad2.vy := Pad2.vy - 1;
@@ -347,7 +364,22 @@ begin
     Player.x := Settings.Width div 2 - Player.w div 2;
     Player.y := Settings.Height div 2 - Player.h div 2;
     Player.vx := 0;
-    Player.vy := 10;
+    Player.vy := 0;
+    while Player.vy = 0 do
+      Player.vy := (Random(3)-1) * 10;
+    StartUpDelay := 100;
+  end;
+
+  if Player.vx = 0 then
+  begin
+    Dec(StartUpDelay);
+    if StartUpDelay = 0 then
+    begin
+      while Player.vx = 0 do
+        Player.vx := (Random(3)-1) * 10;
+      StartUpDelay := 100;
+      al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    end;
   end;
 end;
 
@@ -379,13 +411,21 @@ begin
         begin
           case Event.Keyboard.KeyCode of
             ALLEGRO_KEY_S:
-              Inc(Player.vy);
+                Player.vy := Trunc(Player.vy*1.5);
             ALLEGRO_KEY_W:
-              Dec(Player.vy);
+                Player.vy := Trunc(Player.vy/1.5);
             ALLEGRO_KEY_D:
-              Inc(Player.vx);
+              if Player.vx = 0 then
+              begin
+                Player.vx := 10;
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+              end;
             ALLEGRO_KEY_A:
-              Dec(Player.vx);
+              if Player.vx = 0 then
+              begin
+                Player.vx := -10;
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+              end;
             ALLEGRO_KEY_ESCAPE:
               IsRunning := False;
           end;
