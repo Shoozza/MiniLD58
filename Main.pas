@@ -10,7 +10,9 @@ uses
   SysUtils,
   IniFiles,
   Allegro5,
-  al5primitives;
+  al5primitives,
+  al5audio,
+  al5acodec;
 
 type
   TPlayer = record
@@ -41,6 +43,8 @@ var
     PlayerColor, PlayerShadeColor,
     LeftPadColor, LeftPadShadeColor,
     RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
+  WallSound, LeftPadSound, RightPadSound,
+    LostSound, SpawnSound, PointSound: ALLEGRO_SAMPLEptr;
 
 procedure Init;
 begin
@@ -54,6 +58,11 @@ begin
   Display := al_create_display(Settings.Width, Settings.Height);
 
   al_install_keyboard;
+  al_init_acodec_addon;
+  if not al_install_audio then
+    Writeln('error: al_install_audio');
+  if not al_reserve_samples(16) then
+    Writeln('error: al_reserve_samples');
 
   Timer := al_create_timer(1.0 / 60.0);
   Queue := al_create_event_queue;
@@ -64,6 +73,30 @@ begin
   al_register_event_source(Queue, al_get_timer_event_source(Timer));
   al_register_event_source(Queue, al_get_keyboard_event_source);
   al_start_timer(Timer);
+
+  WallSound := al_load_sample(GetCurrentDir + '\wall.wav');
+  if WallSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\wall.wav');
+
+  LeftPadSound := al_load_sample(GetCurrentDir + '\left.wav');
+  if leftPadSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\left.wav');
+
+  RightPadSound := al_load_sample(GetCurrentDir + '\right.wav');
+  if RightPadSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\right.wav');
+
+  LostSound := al_load_sample(GetCurrentDir + '\lost.wav');
+  if LostSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\lost.wav');
+
+  SpawnSound := al_load_sample(GetCurrentDir + '\spawn.wav');
+  if SpawnSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\spawn.wav');
+
+  PointSound := al_load_sample(GetCurrentDir + '\point.wav');
+  if PointSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\point.wav');
 
   BackgroundColor := al_map_rgb(255, 255, 255);
   BackgroundShadeColor := al_map_rgb(200, 200, 200);
@@ -273,11 +306,13 @@ begin
   begin
     Player.vy := -Player.vy;
     Player.y := Settings.Height-Player.h;
+    al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if Player.y <= 0 then
   begin
     Player.vy := -Player.vy;
     Player.y := 0;
+    al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end;
 
   // collide
@@ -288,6 +323,7 @@ begin
     Player.vx := -Player.vx;
     Player.x := Pad1.x+Pad1.w;
     Pad1.vy := Pad1.vy + 1;
+    al_play_sample(LeftPadSound, 1.0, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if (Player.x+Player.w >= Pad2.x) and (Player.x <= Pad2.x+Pad2.w) and
     ((Player.y+Player.h >= Pad2.y) and (Player.y+Player.h <= Pad2.y+Pad2.h) or
@@ -296,12 +332,18 @@ begin
     Player.vx := -Player.vx;
     Player.x := Pad2.x-Player.w;
     Pad2.vy := Pad2.vy - 1;
+    al_play_sample(RightPadSound, 1.0, 0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end;
 
   // check for lost game
   if (Player.x+Player.w < 0) or (Player.x > Settings.Width) then
   begin
     // lost
+    if player.x < Settings.Width then
+      al_play_sample(LostSound, 1.0, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    else
+      al_play_sample(LostSound, 1.0,  0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
+
     Player.x := Settings.Width div 2 - Player.w div 2;
     Player.y := Settings.Height div 2 - Player.h div 2;
     Player.vx := 0;
