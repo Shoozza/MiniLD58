@@ -37,6 +37,7 @@ var
   Pad1, Pad2: TPad;
   Settings: TSettings;
   Ini: TMemIniFile;
+  BackgroundColor, BackgroundColorDark, PlayerColor, LeftPadColor, RightPadColor: ALLEGRO_COLOR;
 
 procedure Init;
 begin
@@ -60,6 +61,12 @@ begin
   al_register_event_source(Queue, al_get_timer_event_source(Timer));
   al_register_event_source(Queue, al_get_keyboard_event_source);
   al_start_timer(Timer);
+
+  BackgroundColor := al_map_rgb(255, 255, 255);
+  BackgroundColorDark := al_map_rgb(200, 200, 200);
+  PlayerColor := al_map_rgb(248, 180, 93);
+  LeftPadColor := al_map_rgb(51, 139, 209);
+  RightPadColor := al_map_rgb(230,  98, 98);
 
   Player.x := 100;
   Player.y := 100;
@@ -85,26 +92,26 @@ end;
 
 procedure DrawPlayer(var Player: TPlayer);
 begin
-  al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, al_map_rgb(255, 255, 255));
+  al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, PlayerColor);
 end;
 
-procedure DrawPad(var Pad: TPad);
+procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR);
 begin
-  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+Pad.w, Pad.y+Pad.h, al_map_rgb(255,0,0));
+  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+Pad.w, Pad.y+Pad.h, PadColor);
 end;
 
 procedure Draw;
 const
   SIZE = 60;
 begin
-  al_clear_to_color(al_map_rgb(0, 0, 0));
+  al_clear_to_color(BackgroundColor);
 
   al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
-    Settings.Height, al_map_rgb(128, 128, 128));
+    Settings.Height, BackgroundColorDark);
 
   DrawPlayer(Player);
-  DrawPad(Pad1);
-  DrawPad(Pad2);
+  DrawPad(Pad1, LeftPadColor);
+  DrawPad(Pad2, RightPadColor);
 
   al_flip_display;
 end;
