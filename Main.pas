@@ -87,7 +87,7 @@ begin
 
   al_init;
   Display := al_create_display(Settings.Width, Settings.Height);
-  al_set_window_title(Display, 'MiniLD58 - Pong');
+  al_set_window_title(Display, 'MiniLD58 - Theme: "Pong" - Balldr');
 
   RatioX := Settings.Width / INTERNAL_WIDTH;
   RatioY := Settings.Height / INTERNAL_HEIGHT;
