@@ -83,6 +83,7 @@ begin
 
   al_init;
   Display := al_create_display(Settings.Width, Settings.Height);
+  al_set_window_title(Display, 'MiniLD58 - Pong');
 
   Randomize;
 
