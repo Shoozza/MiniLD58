@@ -45,6 +45,8 @@ type
 
 const
   MAX_COINS = 2;
+  INTERNAL_HEIGHT = 1080;
+  INTERNAL_WIDTH  = 1920;
 
 var
   Display: ALLEGRO_DISPLAYptr;
@@ -71,6 +73,7 @@ var
   BestScore: Integer;
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
+  RatioX, RatioY: Single;
 
 procedure Init;
 var
@@ -86,6 +89,9 @@ begin
   Display := al_create_display(Settings.Width, Settings.Height);
   al_set_window_title(Display, 'MiniLD58 - Pong');
 
+  RatioX := Settings.Width / INTERNAL_WIDTH;
+  RatioY := Settings.Height / INTERNAL_HEIGHT;
+
   Randomize;
 
   al_init_image_addon;
@@ -96,7 +102,7 @@ begin
   al_init_acodec_addon;
   if not al_install_audio then
     Writeln('error: al_install_audio');
-  if not al_reserve_samples(32) then
+  if not al_reserve_samples(16) then
     Writeln('error: al_reserve_samples');
 
   al_install_keyboard;
@@ -133,7 +139,7 @@ begin
   if PointSound = nil then
     Writeln('Error: loading ' + GetCurrentDir + '\point.wav');
 
-  Font := al_load_font(GetCurrentDir + '\font.ttf', 7*72, 0);
+  Font := al_load_font(GetCurrentDir + '\font.ttf', Trunc(504.0 * RatioX), 0);
   if Font = nil then
     WriteLn('Error: loading ttf font');
 
@@ -183,8 +189,8 @@ begin
   Pad1.vx := 0;
   Pad1.vy := 4;
 
-  Pad2.x := Settings.Width-60;
-  Pad2.y := Settings.Height - 180;
+  Pad2.x := INTERNAL_WIDTH-60;
+  Pad2.y := INTERNAL_HEIGHT- 180;
   Pad2.w := 60;
   Pad2.h := 180;
   Pad2.vx := 0;
@@ -308,8 +314,13 @@ begin
     end;
   end;
 
-  al_draw_filled_triangle(x1+ShakeX, y1+ShakeY, x2+ShakeX, y2+ShakeY, x3+ShakeX, y3+ShakeY, PlayerShadeColor);
-  al_draw_filled_rectangle(Player.x+ShakeX, Player.y+ShakeY, Player.x+Player.w+ShakeX, Player.y+Player.h+ShakeY, PlayerColor);
+  al_draw_filled_triangle(
+    (x1+ShakeX) * RatioX, (y1+ShakeY) * RatioY,
+    (x2+ShakeX) * RatioX, (y2+ShakeY) * RatioY,
+    (x3+ShakeX) * RatioX, (y3+ShakeY) * RatioY, PlayerShadeColor);
+  al_draw_filled_rectangle(
+    (Player.x+ShakeX) * RatioX, (Player.y+ShakeY) * RatioY,
+    (Player.x+Player.w+ShakeX) * RatioX, (Player.y+Player.h+ShakeY) * RatioY, PlayerColor);
 end;
 
 procedure DrawCoin(var Coin: TCoin);
@@ -424,44 +435,48 @@ begin
   if Coin.Hits > 1 then
   begin
     al_draw_filled_triangle(
-      x1+Coin.ShakeX, y1+Coin.ShakeY,
-      x2+Coin.ShakeX, y2+Coin.ShakeY,
-      x3+Coin.ShakeX, y3+Coin.ShakeY, HardCoinShadeColor);
+      (x1+Coin.ShakeX)*RatioX, (y1+Coin.ShakeY)*RatioY,
+      (x2+Coin.ShakeX)*RatioX, (y2+Coin.ShakeY)*RatioY,
+      (x3+Coin.ShakeX)*RatioX, (y3+Coin.ShakeY)*RatioY, HardCoinShadeColor);
 
     if Coin.Active > 30 then
       al_draw_filled_rectangle(
-        Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
-        Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, HardCoinColor)
+        (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, HardCoinColor)
     else
       al_draw_filled_rectangle(
-        Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
-        Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, HardCoinShadeColor);
+        (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, HardCoinShadeColor);
   end
   else
   begin
     al_draw_filled_triangle(
-      x1+Coin.ShakeX, y1+Coin.ShakeY,
-      x2+Coin.ShakeX, y2+Coin.ShakeY,
-      x3+Coin.ShakeX, y3+Coin.ShakeY, CoinShadeColor);
+      (x1+Coin.ShakeX)*RatioX, (y1+Coin.ShakeY)*RatioY,
+      (x2+Coin.ShakeX)*RatioX, (y2+Coin.ShakeY)*RatioY,
+      (x3+Coin.ShakeX)*RatioX, (y3+Coin.ShakeY)*RatioY, CoinShadeColor);
 
     if Coin.Active > 30 then
       al_draw_filled_rectangle(
-        Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
-        Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, CoinColor)
+        (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, CoinColor)
     else
       al_draw_filled_rectangle(
-        Coin.x+Coin.ShakeX, Coin.y+Coin.ShakeY,
-        Coin.x+Coin.w+Coin.ShakeX, Coin.y+Coin.h+Coin.ShakeY, CoinShadeColor);
+        (Coin.x+Coin.ShakeX)*RatioX, (Coin.y+Coin.ShakeY)*RatioY,
+        (Coin.x+Coin.w+Coin.ShakeX)*RatioX, (Coin.y+Coin.h+Coin.ShakeY)*RatioY, CoinShadeColor);
   end;
 end;
 
 procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
 begin
-  al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+Pad.w, Pad.y+Pad.h, PadColor);
+  al_draw_filled_rectangle(
+    Pad.x*RatioX, Pad.y*RatioY,
+    (Pad.x+Pad.w)*RatioX, (Pad.y+Pad.h)*RatioY, PadColor);
   if Pad.vy > 0 then
-    al_draw_filled_rectangle(Pad.x, Pad.y-Pad.vy*10, Pad.x+Pad.w, Pad.y, PadShadeColor)
+    al_draw_filled_rectangle(
+      Pad.x*RatioX, (Pad.y-Pad.vy*10)*RatioY, (Pad.x+Pad.w)*RatioX, Pad.y*RatioY, PadShadeColor)
   else if Pad.vy < 0 then
-    al_draw_filled_rectangle(Pad.x, Pad.y+Pad.h, Pad.x+Pad.w, Pad.y+Pad.h-Pad.vy*10, PadShadeColor);
+    al_draw_filled_rectangle(
+      Pad.x*RatioX, (Pad.y+Pad.h)*RatioY, (Pad.x+Pad.w)*RatioX, (Pad.y+Pad.h-Pad.vy*10)*RatioY, PadShadeColor);
 end;
 
 procedure Draw;
@@ -486,7 +501,7 @@ begin
     ShakeY := 0;
   end;
 
-  al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
+  al_draw_filled_rectangle(Settings.Width/2-SIZE*RatioX, 0, Settings.Width/2+SIZE*RatioX,
     Settings.Height, BackgroundShadeColor);
 
   DrawPad(Pad1, LeftPadColor, LeftPadShadeColor);
@@ -518,8 +533,8 @@ begin
     al_draw_filled_rectangle(0, 0,
       Settings.Width, Settings.Height,
       al_map_rgba(0, 0, 0, 40));
-    al_draw_filled_rectangle(Settings.Width / 20, Settings.Height / 20,
-      Settings.Width - Settings.Width / 20, Settings.Height - Settings.Height / 20,
+    al_draw_filled_rectangle(Settings.Width / 20 * RatioX, Settings.Height / 20 * RatioY,
+      Settings.Width - Settings.Width / 20 * RatioX, Settings.Height - Settings.Height / 20 * RatioX,
       al_map_rgba(0, 0, 0, 40));
   end;
 
@@ -539,8 +554,8 @@ begin
   begin
     Coins[N].Hits := random(2) + 1;
     Coins[N].Active := (random(40) + 300) * Coins[N].Hits;
-    Coins[N].x := random(Settings.Width div 2) + Settings.Width div 4;
-    Coins[N].y := random(Settings.Height div 2) + Settings.Height div 4;
+    Coins[N].x := random(INTERNAL_WIDTH div 2) + INTERNAL_WIDTH div 4;
+    Coins[N].y := random(INTERNAL_HEIGHT div 2) + INTERNAL_HEIGHT div 4;
     Coins[N].vx := random(3) - 2;
     Coins[N].vy := random(9) - 5;
     Coins[N].Shake := 0;
@@ -585,11 +600,11 @@ begin
 
       if Coins[I].Active > 0 then
       begin
-        if Coins[I].y+Coins[I].h >= Settings.Height then
+        if Coins[I].y+Coins[I].h >= INTERNAL_HEIGHT then
         begin
           Coins[I].Shake := 20;
           Coins[I].vy := -Coins[I].vy;
-          Coins[I].y := Settings.Height-Coins[I].h;
+          Coins[I].y := INTERNAL_HEIGHT-Coins[I].h;
         end
         else if Coins[I].y <= 0 then
         begin
@@ -602,10 +617,10 @@ begin
   end;
 
   // bots
-  if Pad1.y+Pad1.h >= Settings.Height then
+  if Pad1.y+Pad1.h >= INTERNAL_HEIGHT then
   begin
     Pad1.vy := -Pad1.vy;
-    Pad1.y := Settings.Height-Pad1.h;
+    Pad1.y := INTERNAL_HEIGHT-Pad1.h;
   end
   else if Pad1.y <= 0 then
   begin
@@ -613,10 +628,10 @@ begin
     Pad1.y := 0;
   end;
 
-  if Pad2.y+Pad2.h >= Settings.Height then
+  if Pad2.y+Pad2.h >= INTERNAL_HEIGHT then
   begin
     Pad2.vy := -Pad2.vy;
-    Pad2.y := Settings.Height-Pad2.h;
+    Pad2.y := INTERNAL_HEIGHT-Pad2.h;
   end
   else if Pad2.y <= 0 then
   begin
@@ -624,11 +639,11 @@ begin
     Pad2.y := 0;
   end;
 
-  if Player.y+Player.h >= Settings.Height then
+  if Player.y+Player.h >= INTERNAL_HEIGHT then
   begin
     Shake := 10;
     Player.vy := -Player.vy;
-    Player.y := Settings.Height-Player.h;
+    Player.y := INTERNAL_HEIGHT-Player.h;
     al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if Player.y <= 0 then
@@ -664,16 +679,16 @@ begin
   end;
 
   // check for lost game
-  if (Player.x+Player.w < 0) or (Player.x > Settings.Width) then
+  if (Player.x+Player.w < 0) or (Player.x > INTERNAL_WIDTH) then
   begin
     // lost
-    if player.x < Settings.Width then
+    if player.x < INTERNAL_WIDTH then
       al_play_sample(LostSound, 1.0, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
     else
       al_play_sample(LostSound, 1.0,  0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
 
-    Player.x := Settings.Width div 2 - Player.w div 2;
-    Player.y := Settings.Height div 2 - Player.h div 2;
+    Player.x := INTERNAL_WIDTH div 2 - Player.w div 2;
+    Player.y := INTERNAL_HEIGHT div 2 - Player.h div 2;
     Player.vx := 0;
     Player.vy := 0;
     while Player.vy = 0 do
