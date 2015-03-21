@@ -115,31 +115,31 @@ begin
   al_register_event_source(Queue, al_get_keyboard_event_source);
   al_start_timer(Timer);
 
-  WallSound := al_load_sample(GetCurrentDir + '\wall.wav');
+  WallSound := al_load_sample(GetCurrentDir + PathDelim + 'wall.wav');
   if WallSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\wall.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'wall.wav');
 
-  LeftPadSound := al_load_sample(GetCurrentDir + '\left.wav');
+  LeftPadSound := al_load_sample(GetCurrentDir + PathDelim + 'left.wav');
   if leftPadSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\left.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'left.wav');
 
-  RightPadSound := al_load_sample(GetCurrentDir + '\right.wav');
+  RightPadSound := al_load_sample(GetCurrentDir + PathDelim + 'right.wav');
   if RightPadSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\right.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'right.wav');
 
-  LostSound := al_load_sample(GetCurrentDir + '\lost.wav');
+  LostSound := al_load_sample(GetCurrentDir + PathDelim + 'lost.wav');
   if LostSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\lost.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'lost.wav');
 
-  SpawnSound := al_load_sample(GetCurrentDir + '\spawn.wav');
+  SpawnSound := al_load_sample(GetCurrentDir + PathDelim + 'spawn.wav');
   if SpawnSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\spawn.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'spawn.wav');
 
-  PointSound := al_load_sample(GetCurrentDir + '\point.wav');
+  PointSound := al_load_sample(GetCurrentDir + PathDelim + 'point.wav');
   if PointSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\point.wav');
+    Writeln('Error: loading ' + GetCurrentDir + PathDelim + 'point.wav');
 
-  Font := al_load_font(GetCurrentDir + '\font.ttf', Trunc(504.0 * RatioX), 0);
+  Font := al_load_font(GetCurrentDir + PathDelim + 'font.ttf', Trunc(504.0 * RatioX), 0);
   if Font = nil then
     WriteLn('Error: loading ttf font');
 
@@ -791,12 +791,9 @@ var
 
 procedure LoadIntro;
 begin
-  IntroImage := al_load_bitmap(GetCurrentDir + '\intro.png');
+  IntroImage := al_load_bitmap(GetCurrentDir + PathDelim + 'intro.png');
   if IntroImage = nil then
     Writeln('Error: cannot load intro.png');
-  {IntroSound := al_load_sample(GetCurrentDir + '\intro.wav');
-  if IntroSound = nil then
-    Writeln('Error: loading ' + GetCurrentDir + '\intro.wav');}
 end;
 
 procedure DrawIntro(Counter: Integer);
