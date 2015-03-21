@@ -96,7 +96,7 @@ begin
   al_init_acodec_addon;
   if not al_install_audio then
     Writeln('error: al_install_audio');
-  if not al_reserve_samples(16) then
+  if not al_reserve_samples(32) then
     Writeln('error: al_reserve_samples');
 
   al_install_keyboard;
@@ -754,7 +754,71 @@ begin
       Player.vy := 1;
     end;
   end;
+end;
 
+var
+  IntroImage: ALLEGRO_BITMAPptr;
+  //IntroSound: ALLEGRO_SAMPLEptr;
+
+procedure LoadIntro;
+begin
+  IntroImage := al_load_bitmap(GetCurrentDir + '\intro.png');
+  if IntroImage = nil then
+    Writeln('Error: cannot load intro.png');
+  {IntroSound := al_load_sample(GetCurrentDir + '\intro.wav');
+  if IntroSound = nil then
+    Writeln('Error: loading ' + GetCurrentDir + '\intro.wav');}
+end;
+
+procedure DrawIntro(Counter: Integer);
+var
+  C: Single;
+begin
+  al_clear_to_color(al_map_rgb(164, 164, 164));
+  C := Counter / 120.0;
+  al_draw_tinted_scaled_bitmap(IntroImage, al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
+    0, 0, al_get_bitmap_width(IntroImage), al_get_bitmap_height(IntroImage),
+    (Settings.Width - al_get_bitmap_width(IntroImage)*4) / 2.0,
+    (Settings.Height - al_get_bitmap_height(IntroImage)*4) / 2.0,
+    al_get_bitmap_width(IntroImage)*4, al_get_bitmap_height(IntroImage)*4, 0);
+  {al_draw_tinted_bitmap(IntroImage, al_map_rgba(255, 255, 225, Trunc(Counter / 120.0 * 255)),
+    (Settings.Width - al_get_bitmap_width(IntroImage)) / 2.0,
+    (Settings.Height - al_get_bitmap_height(IntroImage)) / 2.0, 0);}
+  al_flip_display;
+end;
+
+procedure Intro;
+var
+  ShowIntro: Integer;
+  ShouldDraw: Boolean;
+  Event: ALLEGRO_EVENT;
+begin
+  ShowIntro := 120;
+  ShouldDraw := False;
+
+  LoadIntro;
+
+  //al_play_sample(IntroSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
+  while ShowIntro > -30 do
+  begin
+    if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
+    begin
+      if ShowIntro > 0 then
+        DrawIntro(ShowIntro);
+      Dec(ShowIntro);
+    end;
+
+    al_wait_for_event(Queue, Event);
+
+    case Event._type of
+      ALLEGRO_EVENT_DISPLAY_CLOSE:
+        Halt;
+      ALLEGRO_EVENT_TIMER:
+        ShouldDraw := True;
+      ALLEGRO_EVENT_KEY_DOWN:
+        ShowIntro := 0;
+    end;
+  end;
 end;
 
 procedure Loop;
@@ -833,6 +897,7 @@ begin
   Writeln('Start');
 
   Init;
+  Intro;
   Loop;
   Clean;
 
