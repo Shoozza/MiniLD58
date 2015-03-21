@@ -236,6 +236,7 @@ end;
 
 procedure Update;
 begin
+  // move
   Player.x := Player.x + Player.vx;
   Player.y := Player.y + Player.vy;
 
@@ -244,6 +245,56 @@ begin
 
   Pad2.x := Pad2.x + Pad2.vx;
   Pad2.y := Pad2.y + Pad2.vy;
+
+  // bots
+  if Pad1.y+Pad1.h >= Settings.Height then
+  begin
+    Pad1.vy := -Pad1.vy;
+    Pad1.y := Settings.Height-Pad1.h;
+  end
+  else if Pad1.y <= 0 then
+  begin
+    Pad1.vy := -Pad1.vy;
+    Pad1.y := 0;
+  end;
+
+  if Pad2.y+Pad2.h >= Settings.Height then
+  begin
+    Pad2.vy := -Pad2.vy;
+    Pad2.y := Settings.Height-Pad2.h;
+  end
+  else if Pad2.y <= 0 then
+  begin
+    Pad2.vy := -Pad2.vy;
+    Pad2.y := 0;
+  end;
+
+  if Player.y+Player.h >= Settings.Height then
+  begin
+    Player.vy := -Player.vy;
+    Player.y := Settings.Height-Player.h;
+  end
+  else if Player.y <= 0 then
+  begin
+    Player.vy := -Player.vy;
+    Player.y := 0;
+  end;
+
+  // collide
+  if (Player.x <= Pad1.x+Pad1.w) and (Player.x >= 0) and
+    ((Player.y+Player.h >= Pad1.y) and (Player.y+Player.h <= Pad1.y+Pad1.h) or
+    (Player.y >= Pad1.y) and (Player.y <= Pad1.y+Pad1.h)) then
+  begin
+    Player.vx := -Player.vx;
+    Player.x := Pad1.x+Pad1.w;
+  end
+  else if (Player.x+Player.w >= Pad2.x) and (Player.x <= Pad2.x+Pad2.w) and
+    ((Player.y+Player.h >= Pad2.y) and (Player.y+Player.h <= Pad2.y+Pad2.h) or
+    (Player.y >= Pad2.y) and (Player.y <= Pad2.y+Pad2.h)) then
+  begin
+    Player.vx := -Player.vx;
+    Player.x := Pad2.x-Player.w;
+  end;
 end;
 
 procedure Loop;
