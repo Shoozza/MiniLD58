@@ -70,8 +70,9 @@ begin
   PlayerColor := al_map_rgb(248, 180, 93);
   PlayerShadeColor := al_map_rgb(255, 222, 178);
   LeftPadColor := al_map_rgb(51, 139, 209);
+  LeftPadShadeColor := al_map_rgb(199, 219, 246);
   RightPadColor := al_map_rgb(230,  98, 98);
-  RightPadShadeColor := al_map_rgb(230,  98, 98);
+  RightPadShadeColor := al_map_rgb(251, 185, 185);
 
   Player.x := 100;
   Player.y := 100;
@@ -85,14 +86,14 @@ begin
   Pad1.w := 60;
   Pad1.h := 180;
   Pad1.vx := 0;
-  Pad1.vy := 0;
+  Pad1.vy := 4;
 
   Pad2.x := Settings.Width-60;
-  Pad2.y := 0;
+  Pad2.y := Settings.Height - 180;
   Pad2.w := 60;
   Pad2.h := 180;
   Pad2.vx := 0;
-  Pad2.vy := 0;
+  Pad2.vy := -4;
 end;
 
 procedure DrawPlayer(var Player: TPlayer);
@@ -100,6 +101,8 @@ var
   x1, y1: Integer;
   x2, y2: Integer;
   x3, y3: Integer;
+const
+  LEN = 10;
 begin
   x1 := 0;
   x2 := 0;
@@ -119,7 +122,7 @@ begin
 
       y1 := Player.y;
       y2 := Player.y;
-      y3 := Player.y - Player.vy*5;
+      y3 := Player.y - Player.vy*LEN;
     end
     else if Player.vy < 0 then
     begin
@@ -129,7 +132,7 @@ begin
 
       y1 := Player.y + Player.h;
       y2 := Player.y + Player.h;
-      y3 := Player.y + Player.h - Player.vy*5;
+      y3 := Player.y + Player.h - Player.vy*LEN;
     end
   end
   else if Player.vy = 0 then
@@ -138,7 +141,7 @@ begin
     begin
       x1 := Player.x;
       x2 := Player.x;
-      x3 := Player.x - Player.vx*5;
+      x3 := Player.x - Player.vx*LEN;
 
       y1 := Player.y;
       y2 := Player.y + Player.h;
@@ -148,7 +151,7 @@ begin
     begin
       x1 := Player.x + Player.w;
       x2 := Player.x + Player.w;
-      x3 := Player.x + Player.w - Player.vx*5;
+      x3 := Player.x + Player.w - Player.vx*LEN;
 
       y1 := Player.y;
       y2 := Player.y + Player.h;
@@ -161,21 +164,21 @@ begin
     begin
       x1 := Player.x;
       x2 := Player.x + Player.w;
-      x3 := Player.x - Player.vx*5;
+      x3 := Player.x - Player.vx*LEN;
 
       y1 := Player.y + Player.h;
       y2 := Player.y;
-      y3 := Player.y - Player.vy*5;
+      y3 := Player.y - Player.vy*LEN;
     end
     else if Player.vx < 0 then
     begin
       x1 := Player.x;
       x2 := Player.x + Player.w;
-      x3 := Player.x + Player.w - Player.vx*5;
+      x3 := Player.x + Player.w - Player.vx*LEN;
 
       y1 := Player.y;
       y2 := Player.y + Player.h;
-      y3 := Player.y - Player.vy*5;
+      y3 := Player.y - Player.vy*LEN;
     end;
   end
   else if Player.vy < 0 then
@@ -184,32 +187,35 @@ begin
     begin
       x1 := Player.x;
       x2 := Player.x + Player.w;
-      x3 := Player.x - Player.vx*5;
+      x3 := Player.x - Player.vx*LEN;
 
       y1 := Player.y;
       y2 := Player.y + Player.h;
-      y3 := Player.y + Player.h - Player.vy*5;
+      y3 := Player.y + Player.h - Player.vy*LEN;
     end
     else if Player.vx < 0 then
     begin
       x1 := Player.x;
       x2 := Player.x + Player.w;
-      x3 := Player.x + Player.w - Player.vx*5;
+      x3 := Player.x + Player.w - Player.vx*LEN;
 
       y1 := Player.y + Player.h;
       y2 := Player.y;
-      y3 := Player.y + Player.h - Player.vy*5;
+      y3 := Player.y + Player.h - Player.vy*LEN;
     end;
   end;
 
   al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, PlayerShadeColor);
   al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, PlayerColor);
-
 end;
 
-procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR);
+procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
 begin
   al_draw_filled_rectangle(Pad.x, Pad.y, Pad.x+Pad.w, Pad.y+Pad.h, PadColor);
+  if Pad.vy > 0 then
+    al_draw_filled_rectangle(Pad.x, Pad.y-Pad.vy*10, Pad.x+Pad.w, Pad.y, PadShadeColor)
+  else if Pad.vy < 0 then
+    al_draw_filled_rectangle(Pad.x, Pad.y+Pad.h, Pad.x+Pad.w, Pad.y+Pad.h-Pad.vy*10, PadShadeColor);
 end;
 
 procedure Draw;
@@ -222,8 +228,8 @@ begin
     Settings.Height, BackgroundShadeColor);
 
   DrawPlayer(Player);
-  DrawPad(Pad1, LeftPadColor);
-  DrawPad(Pad2, RightPadColor);
+  DrawPad(Pad1, LeftPadColor, LeftPadShadeColor);
+  DrawPad(Pad2, RightPadColor, RightPadShadeColor);
 
   al_flip_display;
 end;
