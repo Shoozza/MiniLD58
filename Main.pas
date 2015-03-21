@@ -87,6 +87,8 @@ begin
 
   al_init;
   Display := al_create_display(Settings.Width, Settings.Height);
+  al_clear_to_color(al_map_rgb(164, 164, 164));
+  al_flip_display;
   al_set_window_title(Display, 'MiniLD58 - Theme: "Pong" - Balldr');
 
   RatioX := Settings.Width / INTERNAL_WIDTH;
@@ -787,7 +789,8 @@ end;
 
 var
   IntroImage: ALLEGRO_BITMAPptr;
-  //IntroSound: ALLEGRO_SAMPLEptr;
+const
+  IntroDelay = 60;
 
 procedure LoadIntro;
 begin
@@ -801,7 +804,7 @@ var
   C, R: Single;
 begin
   al_clear_to_color(al_map_rgb(164, 164, 164));
-  C := Counter / 120.0;
+  C := Counter / IntroDelay;
   R := Settings.Width / al_get_bitmap_width(IntroImage);
   al_draw_tinted_scaled_bitmap(IntroImage,
     al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
@@ -815,11 +818,12 @@ end;
 
 procedure Intro;
 var
-  ShowIntro: Integer;
+  Fade, ShowIntro: Integer;
   ShouldDraw: Boolean;
   Event: ALLEGRO_EVENT;
 begin
-  ShowIntro := 120;
+  Fade := 165;
+  ShowIntro := IntroDelay;
   ShouldDraw := False;
 
   LoadIntro;
@@ -829,7 +833,15 @@ begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
     begin
       if ShowIntro > 0 then
+      begin
         DrawIntro(ShowIntro);
+      end
+      else
+      begin
+        Inc(Fade, 3);
+        al_clear_to_color(al_map_rgb(Fade, Fade, Fade));
+        al_flip_display;
+      end;
       Dec(ShowIntro);
     end;
 
