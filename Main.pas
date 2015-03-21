@@ -274,7 +274,14 @@ begin
     Dec(Shake);
     ShakeX := random(35);
     ShakeY := random(35);
+  end
+  else if Shake = 0 then
+  begin
+    Dec(Shake);
+    ShakeX := 0;
+    ShakeY := 0;
   end;
+
   al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
     Settings.Height, BackgroundShadeColor);
 
