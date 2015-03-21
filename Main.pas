@@ -48,6 +48,7 @@ var
   StartUpDelay: Integer;
   Shake: Integer;
   ShakeX, ShakeY: Single;
+  KeyS, KeyW: Boolean;
 
 procedure Init;
 begin
@@ -111,9 +112,13 @@ begin
   RightPadColor := al_map_rgb(230,  98, 98);
   RightPadShadeColor := al_map_rgb(251, 185, 185);
 
+  KeyW := False;
+  KeyS := False;
+
   Shake := 0;
   ShakeX := 0;
-  ShakeX := 0;
+  ShakeY := 0;
+
   Player.x := -100;
   Player.y := 100;
   Player.w := 80;
@@ -383,6 +388,30 @@ begin
   end;
 end;
 
+procedure HandleInput;
+begin
+  if KeyW then
+  begin
+    if Player.vy > 0 then
+      Player.vy := Trunc(Player.vy/1.5)
+    else if Player.vy < 0 then
+      Player.vy := Trunc(Player.vy*1.5)
+    else
+      Player.vy := -3;
+  end;
+
+  if KeyS then
+  begin
+    if Player.vy > 0 then
+      Player.vy := Trunc(Player.vy*1.5)
+    else if Player.vy < 0 then
+      Player.vy := Trunc(Player.vy/1.5)
+    else
+      Player.vy := 3;
+  end;
+
+end;
+
 procedure Loop;
 var
   IsRunning, ShouldDraw: boolean;
@@ -395,6 +424,7 @@ begin
   begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
     begin
+      HandleInput;
       Update;
       Draw;
       ShouldDraw := False;
@@ -411,9 +441,9 @@ begin
         begin
           case Event.Keyboard.KeyCode of
             ALLEGRO_KEY_S:
-                Player.vy := Trunc(Player.vy*1.5);
+              KeyS := True;
             ALLEGRO_KEY_W:
-                Player.vy := Trunc(Player.vy/1.5);
+              KeyW := True;
             ALLEGRO_KEY_D:
               if Player.vx = 0 then
               begin
@@ -432,6 +462,12 @@ begin
         end;
       ALLEGRO_EVENT_KEY_UP:
         begin
+          case Event.Keyboard.KeyCode of
+            ALLEGRO_KEY_S:
+              KeyS := False;
+            ALLEGRO_KEY_W:
+              KeyW := False;
+          end;
         end;
     end;
   end;
