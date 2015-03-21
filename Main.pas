@@ -37,7 +37,10 @@ var
   Pad1, Pad2: TPad;
   Settings: TSettings;
   Ini: TMemIniFile;
-  BackgroundColor, BackgroundColorDark, PlayerColor, LeftPadColor, RightPadColor: ALLEGRO_COLOR;
+  BackgroundColor, BackgroundShadeColor,
+    PlayerColor, PlayerShadeColor,
+    LeftPadColor, LeftPadShadeColor,
+    RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
 
 procedure Init;
 begin
@@ -63,10 +66,12 @@ begin
   al_start_timer(Timer);
 
   BackgroundColor := al_map_rgb(255, 255, 255);
-  BackgroundColorDark := al_map_rgb(200, 200, 200);
+  BackgroundShadeColor := al_map_rgb(200, 200, 200);
   PlayerColor := al_map_rgb(248, 180, 93);
+  PlayerShadeColor := al_map_rgb(255, 222, 178);
   LeftPadColor := al_map_rgb(51, 139, 209);
   RightPadColor := al_map_rgb(230,  98, 98);
+  RightPadShadeColor := al_map_rgb(230,  98, 98);
 
   Player.x := 100;
   Player.y := 100;
@@ -91,8 +96,115 @@ begin
 end;
 
 procedure DrawPlayer(var Player: TPlayer);
+var
+  x1, y1: Integer;
+  x2, y2: Integer;
+  x3, y3: Integer;
 begin
+  x1 := 0;
+  x2 := 0;
+  x3 := 0;
+
+  y1 := 0;
+  y2 := 0;
+  y3 := 0;
+
+  if Player.vx = 0 then
+  begin
+    if Player.vy > 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x + Player.w div 2;
+
+      y1 := Player.y;
+      y2 := Player.y;
+      y3 := Player.y - Player.vy*5;
+    end
+    else if Player.vy < 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x + Player.w div 2;
+
+      y1 := Player.y + Player.h;
+      y2 := Player.y + Player.h;
+      y3 := Player.y + Player.h - Player.vy*5;
+    end
+  end
+  else if Player.vy = 0 then
+  begin
+    if Player.vx > 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x;
+      x3 := Player.x - Player.vx*5;
+
+      y1 := Player.y;
+      y2 := Player.y + Player.h;
+      y3 := Player.y + Player.h div 2;
+    end
+    else if Player.vx < 0 then
+    begin
+      x1 := Player.x + Player.w;
+      x2 := Player.x + Player.w;
+      x3 := Player.x + Player.w - Player.vx*5;
+
+      y1 := Player.y;
+      y2 := Player.y + Player.h;
+      y3 := Player.y + Player.h div 2;
+    end
+  end
+  else if Player.vy > 0 then
+  begin
+    if Player.vx > 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x - Player.vx*5;
+
+      y1 := Player.y + Player.h;
+      y2 := Player.y;
+      y3 := Player.y - Player.vy*5;
+    end
+    else if Player.vx < 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x + Player.w - Player.vx*5;
+
+      y1 := Player.y;
+      y2 := Player.y + Player.h;
+      y3 := Player.y - Player.vy*5;
+    end;
+  end
+  else if Player.vy < 0 then
+  begin
+    if Player.vx > 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x - Player.vx*5;
+
+      y1 := Player.y;
+      y2 := Player.y + Player.h;
+      y3 := Player.y + Player.h - Player.vy*5;
+    end
+    else if Player.vx < 0 then
+    begin
+      x1 := Player.x;
+      x2 := Player.x + Player.w;
+      x3 := Player.x + Player.w - Player.vx*5;
+
+      y1 := Player.y + Player.h;
+      y2 := Player.y;
+      y3 := Player.y + Player.h - Player.vy*5;
+    end;
+  end;
+
+  al_draw_filled_triangle(x1, y1, x2, y2, x3, y3, PlayerShadeColor);
   al_draw_filled_rectangle(Player.x, Player.y, Player.x+Player.w, Player.y+Player.h, PlayerColor);
+
 end;
 
 procedure DrawPad(var Pad: TPad; var PadColor: ALLEGRO_COLOR);
@@ -107,7 +219,7 @@ begin
   al_clear_to_color(BackgroundColor);
 
   al_draw_filled_rectangle(Settings.Width/2-SIZE, 0, Settings.Width/2+SIZE,
-    Settings.Height, BackgroundColorDark);
+    Settings.Height, BackgroundShadeColor);
 
   DrawPlayer(Player);
   DrawPad(Pad1, LeftPadColor);
