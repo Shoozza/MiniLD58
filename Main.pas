@@ -785,6 +785,16 @@ begin
       Player.vy := 1;
     end;
   end;
+
+  if Player.vy > 50 then
+    Player.vy := 50
+  else if Player.vy < -50 then
+    Player.vy := -50;
+
+  if Player.vx > 50 then
+    Player.vx := 50
+  else if Player.vx < -50 then
+    Player.vx := -50;
 end;
 
 var
