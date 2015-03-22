@@ -40,7 +40,7 @@ type
   end;
 
   TSettings = record
-    Width, Height: Integer;
+    Width, Height, Mode: Integer;
   end;
 
 const
@@ -84,9 +84,18 @@ begin
 
   Settings.Width := Ini.ReadInteger('GENERAL', 'Screen_Width', 1920);
   Settings.Height := Ini.ReadInteger('GENERAL', 'Screen_Height', 1080);
+  Settings.Mode := Ini.ReadInteger('GENERAL', 'Fullscreen', 0);
 
   al_init;
+  if Settings.Mode = 0 then
+    al_set_new_display_flags(ALLEGRO_WINDOWED)
+  else if Settings.Mode = 1 then
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+
   Display := al_create_display(Settings.Width, Settings.Height);
+  if Display = nil then
+    WriteLn('Error: Cannot create window');
+
   al_clear_to_color(al_map_rgb(164, 164, 164));
   al_flip_display;
   al_set_window_title(Display, 'MiniLD58 - Theme: "Pong" - Balldr');
@@ -938,6 +947,7 @@ procedure Clean;
 begin
   Ini.WriteInteger('GENERAL', 'Screen_Width', Settings.Width);
   Ini.WriteInteger('GENERAL', 'Screen_Height', Settings.Height);
+  Ini.WriteInteger('GENERAL', 'Fullscreen', Settings.Mode);
   Ini.Free;
 end;
 
