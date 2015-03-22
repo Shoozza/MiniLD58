@@ -875,7 +875,7 @@ begin
       ALLEGRO_EVENT_TIMER:
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
-        ShowIntro := 0;
+        ShowIntro := -30;
     end;
   end;
 end;
