@@ -40,7 +40,7 @@ type
   end;
 
   TSettings = record
-    Width, Height, Mode: Integer;
+    Width, Height, Mode, Vsync: Integer;
   end;
 
 const
@@ -85,12 +85,15 @@ begin
   Settings.Width := Ini.ReadInteger('GENERAL', 'Screen_Width', 1920);
   Settings.Height := Ini.ReadInteger('GENERAL', 'Screen_Height', 1080);
   Settings.Mode := Ini.ReadInteger('GENERAL', 'Fullscreen', 0);
+  Settings.Vsync := Ini.ReadInteger('GENERAL', 'VSync', 0);
 
   al_init;
   if Settings.Mode = 0 then
     al_set_new_display_flags(ALLEGRO_WINDOWED)
   else if Settings.Mode = 1 then
     al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+
+  al_set_new_display_option(ALLEGRO_VSYNC, Settings.Vsync, ALLEGRO_REQUIRE);
 
   Display := al_create_display(Settings.Width, Settings.Height);
   if Display = nil then
@@ -948,6 +951,7 @@ begin
   Ini.WriteInteger('GENERAL', 'Screen_Width', Settings.Width);
   Ini.WriteInteger('GENERAL', 'Screen_Height', Settings.Height);
   Ini.WriteInteger('GENERAL', 'Fullscreen', Settings.Mode);
+  Ini.WriteInteger('GENERAL', 'Vsync', Settings.Vsync);
   Ini.Free;
 end;
 
