@@ -569,6 +569,8 @@ procedure Update;
 var
   I: Integer;
   N: Integer;
+const
+  SIZE = 60;
 begin
   if Pause then
     Exit;
@@ -578,7 +580,21 @@ begin
   begin
     Coins[N].Hits := random(2) + 1;
     Coins[N].Active := (random(40) + 300) * Coins[N].Hits;
-    Coins[N].x := random(INTERNAL_WIDTH div 2) + INTERNAL_WIDTH div 4;
+
+
+    if (Player.x + Player.w) < (INTERNAL_WIDTH div 2 - SIZE) then
+      Coins[N].x := random(INTERNAL_WIDTH div 2 - SIZE*2) + SIZE + INTERNAL_WIDTH div 2
+    else if (Player.x) > (INTERNAL_WIDTH div 2 + SIZE) then
+      Coins[N].x := random(INTERNAL_WIDTH div 2 - SIZE*2) + SIZE
+    else
+    begin
+      Coins[N].x := random(INTERNAL_WIDTH - SIZE * 4);
+      if Coins[N].x > (INTERNAL_WIDTH - SIZE * 4) div 2 then
+        Coins[N].x := Coins[N].x + SIZE*3
+      else
+        Coins[N].x := Coins[N].x + SIZE;
+    end;
+
     Coins[N].y := random(INTERNAL_HEIGHT div 2) + INTERNAL_HEIGHT div 4;
     Coins[N].vx := random(3) - 2;
     Coins[N].vy := random(9) - 5;
