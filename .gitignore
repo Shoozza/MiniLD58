@@ -4,6 +4,9 @@
 *.exe
 *.ini
 *.o
+*.png
 *.ppu
+*.ttf
+*.wav
 *.~*
 Backup
