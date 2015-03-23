@@ -850,10 +850,10 @@ begin
   al_draw_tinted_scaled_bitmap(IntroImage,
     al_map_rgba_f(1.0*C, 1.0*C, 1.0*C, C),
     0, 0, al_get_bitmap_width(IntroImage), al_get_bitmap_height(IntroImage),
-    (Settings.Width   - 0.25*R*al_get_bitmap_width(IntroImage))  / 2.0,
-    (Settings.Height  - 0.25*R*al_get_bitmap_height(IntroImage)) / 2.0,
-    0.25*R*al_get_bitmap_width(IntroImage),
-    0.25*R*al_get_bitmap_height(IntroImage), 0);
+    (Settings.Width   - 0.5*R*al_get_bitmap_width(IntroImage))  / 2.0,
+    (Settings.Height  - 0.45*R*al_get_bitmap_height(IntroImage)) / 2.0,
+    0.4*R*al_get_bitmap_width(IntroImage),
+    0.4*R*al_get_bitmap_height(IntroImage), 0);
   al_flip_display;
 end;
 
