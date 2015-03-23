@@ -74,6 +74,7 @@ var
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
   RatioX, RatioY: Single;
+  QuitGame: Boolean;
 
 procedure Init;
 var
@@ -904,6 +905,8 @@ begin
   IsRunning := True;
   ShouldDraw := True;
 
+  Player.x := -100;
+
   while IsRunning do
   begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
@@ -962,6 +965,168 @@ begin
   end;
 end;
 
+var
+  IsMenuInited: Boolean;
+  MenuFont: ALLEGRO_FONTptr;
+  MenuIndex, MenuLayer: Integer;
+
+procedure InitMenu;
+begin
+  MenuFont := al_load_font(GetCurrentDir + PathDelim + 'font.ttf', Trunc(126 * RatioX), 0);
+  if MenuFont = nil then
+    WriteLn('Error: loading menu ttf font');
+  MenuIndex := 0;
+  MenuLayer := 0;
+end;
+
+procedure DrawMenu;
+begin
+  al_clear_to_color(al_map_rgb(255, 255, 255));
+  if MenuIndex = 0 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 24,
+      Settings.Width,
+      Settings.Height div 40 * 28,
+      LeftPadShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 24,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 28,
+      LeftPadColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 24,
+      ALLEGRO_ALIGN_CENTRE, 'Start Game');
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 24,
+      ALLEGRO_ALIGN_CENTRE, 'Start Game');
+  end;
+  if MenuIndex = 1 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 28,
+      Settings.Width,
+      Settings.Height div 40 * 32,
+      RightPadShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 28,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 32,
+      RightPadColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 28,
+      ALLEGRO_ALIGN_CENTRE, 'Options');
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 28,
+      ALLEGRO_ALIGN_CENTRE, 'Options');
+  end;
+
+  if MenuIndex = 2 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 32,
+      Settings.Width,
+      Settings.Height div 40 * 36,
+      PlayerShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 32,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 36,
+      PlayerColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 32,
+      ALLEGRO_ALIGN_CENTRE, 'Exit');
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 32,
+      ALLEGRO_ALIGN_CENTRE, 'Exit');
+  end;
+  al_flip_display;
+end;
+
+procedure Menu;
+var
+  IsMenuRunning, ShouldDraw: Boolean;
+  CurrentMenuItem: Byte;
+  Event: ALLEGRO_EVENT;
+begin
+  if not IsMenuInited then
+  begin
+    InitMenu;
+    IsMenuInited := True;
+  end;
+
+  IsMenuRunning := True;
+  ShouldDraw := False;
+
+  CurrentMenuItem := 0;
+  while IsMenuRunning do
+  begin
+    if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
+    begin
+      DrawMenu;
+      ShouldDraw := False;
+    end;
+
+    al_wait_for_event(Queue, Event);
+
+    case Event._type of
+      ALLEGRO_EVENT_DISPLAY_CLOSE:
+        IsMenuRunning := False;
+      ALLEGRO_EVENT_TIMER:
+        ShouldDraw := True;
+      ALLEGRO_EVENT_KEY_DOWN:
+        begin
+          case Event.Keyboard.KeyCode of
+            ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN:
+              begin
+                MenuIndex := (MenuIndex + 1) mod 3;
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_W, ALLEGRO_KEY_UP:
+              begin
+                MenuIndex := (MenuIndex + 5) mod 3;
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT:
+              begin
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT:
+              begin
+                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_ENTER, ALLEGRO_KEY_SPACE:
+              IsMenuRunning := False;
+            ALLEGRO_KEY_ESCAPE:
+              begin
+                MenuIndex := 2;
+                IsMenuRunning := False;
+              end;
+          end;
+        end;
+    end;
+  end;
+end;
+
 procedure Clean;
 begin
   Ini.WriteInteger('GENERAL', 'Screen_Width', Settings.Width);
@@ -975,9 +1140,16 @@ procedure Run;
 begin
   Writeln('Start');
 
+  IsMenuInited := False;
+  QuitGame := False;
+
   Init;
   Intro;
-  Loop;
+  repeat
+    Menu;
+     if MenuIndex = 0 then
+       Loop;
+  until MenuIndex <> 0;
   Clean;
 
   Writeln('End');
