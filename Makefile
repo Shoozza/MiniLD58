@@ -1,5 +1,5 @@
 all:
-	@fpc MiniLD58.dpr -B -l- -FUobj -FEbin -Fulib/allegro-pas5/lib -dMONOLITH
+	@fpc MiniLD58.dpr -XM__al_mangled_main -B -l- -FUobj -FEbin -Fulib/allegro-pas5/lib -dMONOLITH
 
 delphi:
 	@DCC32 MiniLD58.dpr -l- -Nobj -Ebin -CC -Ulib/allegro-pas5/lib -dMONOLITH
