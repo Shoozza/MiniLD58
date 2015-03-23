@@ -75,6 +75,7 @@ var
   Pause: Boolean;
   RatioX, RatioY: Single;
   QuitGame: Boolean;
+  SfxVolume: Single;
 
 procedure Init;
 var
@@ -157,6 +158,8 @@ begin
   Font := al_load_font(GetCurrentDir + PathDelim + 'font.ttf', Trunc(504.0 * RatioX), 0);
   if Font = nil then
     WriteLn('Error: loading ttf font');
+
+  SfxVolume := 0.5;
 
   BackgroundColor := al_map_rgb(255, 255, 255);
   BackgroundShadeColor := al_map_rgb(235, 235, 235);
@@ -629,14 +632,14 @@ begin
         begin
           Coins[I].Active := 0;
           Inc(Score);
-          al_play_sample(PointSound, 1.0, 0.0, 1.0,
+          al_play_sample(PointSound, SfxVolume, 0.0, 1.0,
             ALLEGRO_PLAYMODE_ONCE, nil);
         end
         else
         begin
           Dec(Coins[I].Hits);
           Inc(Score);
-          al_play_sample(LeftPadSound, 1.0, 0.0, 1.0,
+          al_play_sample(LeftPadSound, SfxVolume, 0.0, 1.0,
             ALLEGRO_PLAYMODE_ONCE, nil);
           Player.vx := -Player.vx;
           Player.vy := -Player.vy;
@@ -689,14 +692,14 @@ begin
     Shake := 10;
     Player.vy := -Player.vy;
     Player.y := INTERNAL_HEIGHT-Player.h;
-    al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    al_play_sample(WallSound, SfxVolume, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if Player.y <= 0 then
   begin
     Shake := 10;
     Player.vy := -Player.vy;
     Player.y := 0;
-    al_play_sample(WallSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    al_play_sample(WallSound, SfxVolume, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end;
 
   // collide
@@ -709,7 +712,7 @@ begin
     Player.x := Pad1.x+Pad1.w;
     Pad1.vy := Pad1.vy + 1;
     Inc(Score);
-    al_play_sample(LeftPadSound, 1.0, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    al_play_sample(LeftPadSound, SfxVolume, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end
   else if (Player.x+Player.w >= Pad2.x) and (Player.x <= Pad2.x+Pad2.w) and
     ((Player.y+Player.h >= Pad2.y) and (Player.y+Player.h <= Pad2.y+Pad2.h) or
@@ -720,7 +723,7 @@ begin
     Player.x := Pad2.x-Player.w;
     Pad2.vy := Pad2.vy - 1;
     Inc(Score);
-    al_play_sample(RightPadSound, 1.0, 0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+    al_play_sample(RightPadSound, SfxVolume, 0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
   end;
 
   // check for lost game
@@ -728,9 +731,9 @@ begin
   begin
     // lost
     if player.x < INTERNAL_WIDTH then
-      al_play_sample(LostSound, 1.0, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+      al_play_sample(LostSound, SfxVolume, -0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
     else
-      al_play_sample(LostSound, 1.0,  0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
+      al_play_sample(LostSound, SfxVolume,  0.75, 1.0, ALLEGRO_PLAYMODE_ONCE, nil);
 
     Player.x := INTERNAL_WIDTH div 2 - Player.w div 2;
     Player.y := INTERNAL_HEIGHT div 2 - Player.h div 2;
@@ -752,7 +755,7 @@ begin
       while Player.vx = 0 do
         Player.vx := (Random(3)-1) * 10;
       StartUpDelay := 100;
-      al_play_sample(SpawnSound, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
+      al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, nil)
     end;
   end;
 end;
@@ -935,14 +938,14 @@ begin
               if (not Pause) and (Player.vx = 0) then
               begin
                 Player.vx := 10;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil)
               end;
             ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT:
               if (not Pause) and (Player.vx = 0) then
               begin
                 Player.vx := -10;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil)
               end;
             ALLEGRO_KEY_P:
@@ -1095,23 +1098,23 @@ begin
             ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN:
               begin
                 MenuIndex := (MenuIndex + 1) mod 3;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil);
               end;
             ALLEGRO_KEY_W, ALLEGRO_KEY_UP:
               begin
                 MenuIndex := (MenuIndex + 5) mod 3;
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil);
               end;
             ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT:
               begin
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil);
               end;
             ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT:
               begin
-                al_play_sample(SpawnSound, 1.0, 0.0, 1.0,
+                al_play_sample(SpawnSound, SfxVolume, 0.0, 1.0,
                   ALLEGRO_PLAYMODE_ONCE, nil);
               end;
             ALLEGRO_KEY_ENTER, ALLEGRO_KEY_SPACE:
