@@ -41,6 +41,7 @@ type
 
   TSettings = record
     Width, Height, Mode, Vsync: Integer;
+    SfxVolumeNum: Integer;
     SfxVolume: Single;
   end;
 
@@ -88,7 +89,8 @@ begin
   Settings.Height := Ini.ReadInteger('GENERAL', 'Screen_Height', 1080);
   Settings.Mode := Ini.ReadInteger('GENERAL', 'Fullscreen', 0);
   Settings.Vsync := Ini.ReadInteger('GENERAL', 'VSync', 0);
-  Settings.SfxVolume := Ini.ReadInteger('GENERAL', 'Sfx_Volume', 50) / 100;
+  Settings.SfxVolumeNum := Ini.ReadInteger('GENERAL', 'Sfx_Volume', 50);
+  Settings.SfxVolume := Settings.SfxVolumeNum / 100;
 
   al_init;
   if Settings.Mode = 0 then
@@ -1060,10 +1062,337 @@ begin
   al_flip_display;
 end;
 
+var
+  IsOptionsInited: Boolean;
+  OptionsIndex: Integer;
+  OptionsSettings: TSettings;
+
+procedure InitOptions;
+begin
+  OptionsSettings := Settings;
+  OptionsIndex := 0;
+end;
+
+procedure DrawOptions;
+begin
+  al_clear_to_color(al_map_rgb(255, 255, 255));
+  if OptionsIndex = 0 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 12,
+      Settings.Width,
+      Settings.Height div 40 * 16,
+      LeftPadShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 12,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 16,
+      LeftPadColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 12,
+      ALLEGRO_ALIGN_CENTRE, 'Resolution: ' +
+        IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height));
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 12,
+      ALLEGRO_ALIGN_CENTRE, 'Resolution: ' +
+        IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height));
+  end;
+
+  if OptionsIndex = 1 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 16,
+      Settings.Width,
+      Settings.Height div 40 * 20,
+      RightPadShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 16,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 20,
+      RightPadColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 16,
+      ALLEGRO_ALIGN_CENTRE, 'Fullscreen: ' + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off'));
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 16,
+      ALLEGRO_ALIGN_CENTRE, 'Fullscreen: ' + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off'));
+  end;
+
+  if OptionsIndex = 2 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 20,
+      Settings.Width,
+      Settings.Height div 40 * 24,
+      PlayerShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 20,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 24,
+      PlayerColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 20,
+      ALLEGRO_ALIGN_CENTRE, 'VSync: ' + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off'));
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 20,
+      ALLEGRO_ALIGN_CENTRE, 'VSync: ' + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off'));
+  end;
+
+  if OptionsIndex = 3 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 24,
+      Settings.Width,
+      Settings.Height div 40 * 28,
+      CoinShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 24,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 28,
+      CoinColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 24,
+      ALLEGRO_ALIGN_CENTRE, 'Sfx Volume: ' + IntToStr(OptionsSettings.SfxVolumeNum));
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 24,
+      ALLEGRO_ALIGN_CENTRE, 'Sfx Volume: ' + IntToStr(OptionsSettings.SfxVolumeNum));
+  end;
+
+  if OptionsIndex = 4 then
+  begin
+    al_draw_filled_rectangle(
+      0,
+      Settings.Height div 40 * 28,
+      Settings.Width,
+      Settings.Height div 40 * 32,
+      HardCoinShadeColor);
+    al_draw_filled_rectangle(
+      Settings.Width div 5,
+      Settings.Height div 40 * 28,
+      Settings.Width - Settings.Width div 5,
+      Settings.Height div 40 * 32,
+      HardCoinColor);
+    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+      Settings.Width div 2, Settings.Height div 40 * 28,
+      ALLEGRO_ALIGN_CENTRE, 'Save');
+  end
+  else
+  begin
+    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+      Settings.Width div 2, Settings.Height div 40 * 28,
+      ALLEGRO_ALIGN_CENTRE, 'Save');
+  end;
+  al_flip_display;
+end;
+
+procedure Options;
+var
+  IsOptionsRunning, ShouldDraw: Boolean;
+  Event: ALLEGRO_EVENT;
+begin
+  if not IsOptionsInited then
+  begin
+    InitOptions;
+    IsOptionsInited := True;
+  end;
+
+  ShouldDraw := False;
+  IsOptionsRunning := True;
+  while IsOptionsRunning do
+  begin
+    if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
+    begin
+      DrawOptions;
+      ShouldDraw := False;
+    end;
+
+    al_wait_for_event(Queue, Event);
+
+    case Event._type of
+      ALLEGRO_EVENT_DISPLAY_CLOSE:
+        IsOptionsRunning := False;
+      ALLEGRO_EVENT_TIMER:
+        ShouldDraw := True;
+      ALLEGRO_EVENT_KEY_DOWN:
+        begin
+          // resolution 1920x1080, 1280x720
+          // fullscreen
+          // vsync
+          // sfxvolume
+          // save
+          case Event.Keyboard.KeyCode of
+            ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN:
+              begin
+                OptionsIndex := (OptionsIndex + 1) mod 5;
+                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_W, ALLEGRO_KEY_UP:
+              begin
+                OptionsIndex := (OptionsIndex + 4) mod 5;
+                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                  ALLEGRO_PLAYMODE_ONCE, nil);
+              end;
+            ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT:
+              begin
+                if OptionsIndex = 0 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  if OptionsSettings.Width = 1920 then
+                  begin
+                    OptionsSettings.Width := 1280;
+                    OptionsSettings.Height := 720;
+                  end
+                  else
+                  begin
+                    OptionsSettings.Width := 1920;
+                    OptionsSettings.Height := 1080;
+                  end;
+                end
+                else if OptionsIndex = 1 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Mode:= (OptionsSettings.Mode + 1) mod 2;
+                end
+                else if OptionsIndex = 2 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
+                end
+                else if OptionsIndex = 3 then
+                begin
+                  Inc(OptionsSettings.SfxVolumeNum, 10);
+                  if OptionsSettings.SfxVolumeNum > 100 then
+                  begin
+                    OptionsSettings.SfxVolumeNum := 100;
+                  end;
+                  OptionsSettings.SfxVolume := OptionsSettings.SfxVolumeNum / 100;
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                end
+                else if OptionsIndex = 4 then
+                begin
+                end;
+              end;
+            ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT:
+              begin
+                if OptionsIndex = 0 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  if OptionsSettings.Width = 1920 then
+                  begin
+                    OptionsSettings.Width := 1280;
+                    OptionsSettings.Height := 720;
+                  end
+                  else
+                  begin
+                    OptionsSettings.Width := 1920;
+                    OptionsSettings.Height := 1080;
+                  end;
+                end
+                else if OptionsIndex = 1 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Mode := (OptionsSettings.Mode + 1) mod 2;
+                end
+                else if OptionsIndex = 2 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
+                end
+                else if OptionsIndex = 3 then
+                begin
+                  Dec(OptionsSettings.SfxVolumeNum, 10);
+                  if OptionsSettings.SfxVolumeNum < 0 then
+                  begin
+                    OptionsSettings.SfxVolumeNum := 0;
+                  end;
+                  OptionsSettings.SfxVolume := OptionsSettings.SfxVolumeNum / 100;
+
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                end
+                else if OptionsIndex = 4 then
+                begin
+                end;
+              end;
+            ALLEGRO_KEY_ENTER, ALLEGRO_KEY_SPACE:
+              begin
+                if OptionsIndex = 0 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  if OptionsSettings.Width = 1920 then
+                  begin
+                    OptionsSettings.Width := 1280;
+                    OptionsSettings.Height := 720;
+                  end
+                  else
+                  begin
+                    OptionsSettings.Width := 1920;
+                    OptionsSettings.Height := 1080;
+                  end;
+                end
+                else if OptionsIndex = 1 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Mode := (OptionsSettings.Mode + 1) mod 2;
+                end
+                else if OptionsIndex = 2 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
+                end
+                else if OptionsIndex = 3 then
+                begin
+                end
+                else if OptionsIndex = 4 then
+                begin
+                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                    ALLEGRO_PLAYMODE_ONCE, nil);
+                  Settings := OptionsSettings;
+                  IsOptionsRunning := False;
+                end;
+              end;
+            ALLEGRO_KEY_ESCAPE:
+              IsOptionsRunning := False;
+            end;
+          end;
+        end;
+  end;
+end;
+
 procedure Menu;
 var
   IsMenuRunning, ShouldDraw: Boolean;
-  CurrentMenuItem: Byte;
   Event: ALLEGRO_EVENT;
 begin
   if not IsMenuInited then
@@ -1075,7 +1404,6 @@ begin
   IsMenuRunning := True;
   ShouldDraw := False;
 
-  CurrentMenuItem := 0;
   while IsMenuRunning do
   begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
@@ -1151,8 +1479,10 @@ begin
   repeat
     Menu;
      if MenuIndex = 0 then
-       Loop;
-  until MenuIndex <> 0;
+       Loop
+     else if MenuIndex = 1 then
+       Options;
+  until MenuIndex = 2;
   Clean;
 
   Writeln('End');
