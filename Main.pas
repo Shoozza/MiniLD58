@@ -1239,11 +1239,6 @@ begin
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
         begin
-          // resolution 1920x1080, 1280x720
-          // fullscreen
-          // vsync
-          // sfxvolume
-          // save
           case Event.Keyboard.KeyCode of
             ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN:
               begin
@@ -1382,6 +1377,38 @@ begin
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
+                  if (Settings.Vsync <> OptionsSettings.Vsync) or
+                     (Settings.Mode <> OptionsSettings.Mode) or
+                     (Settings.Width <> OptionsSettings.Width) then
+                  begin
+                    al_destroy_font(MenuFont);
+                    al_destroy_font(Font);
+                    al_destroy_display(Display);
+                    if OptionsSettings.Mode = 0 then
+                      al_set_new_display_flags(ALLEGRO_WINDOWED)
+                    else if OptionsSettings.Mode = 1 then
+                      al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+
+                    al_set_new_display_option(ALLEGRO_VSYNC, OptionsSettings.Vsync, ALLEGRO_REQUIRE);
+
+                    Display := al_create_display(OptionsSettings.Width, OptionsSettings.Height);
+                    if Display = nil then
+                      WriteLn('Error: Cannot create window');
+
+                    al_set_window_title(Display, 'MiniLD58 - Theme: "Pong" - Balldr');
+
+                    RatioX := OptionsSettings.Width / INTERNAL_WIDTH;
+                    RatioY := OptionsSettings.Height / INTERNAL_HEIGHT;
+
+                    Font := al_load_font(GetCurrentDir + PathDelim + 'font.ttf', Trunc(504.0 * RatioX), 0);
+                    if Font = nil then
+                      WriteLn('Error: loading ttf font');
+
+                    MenuFont := al_load_font(GetCurrentDir + PathDelim + 'font.ttf', Trunc(126 * RatioX), 0);
+                    if MenuFont = nil then
+                      WriteLn('Error: loading menu ttf font');
+                  end;
+
                   Settings := OptionsSettings;
                   IsOptionsRunning := False;
                 end;
@@ -1467,7 +1494,7 @@ begin
   Ini.WriteInteger('GENERAL', 'Screen_Height', Settings.Height);
   Ini.WriteInteger('GENERAL', 'Fullscreen', Settings.Mode);
   Ini.WriteInteger('GENERAL', 'Vsync', Settings.Vsync);
-  Ini.WriteInteger('GENERAL', 'Sfx_Volume', Trunc(Settings.SfxVolume * 100));
+  Ini.WriteInteger('GENERAL', 'Sfx_Volume', Settings.SfxVolumeNum);
   Ini.Free;
 end;
 
