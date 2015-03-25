@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# copies dylibs required by executable
+#    and sets paths up correctly
 
 if [ $# -eq 0 ]; then
   export appname=${PWD##*/}
@@ -19,7 +22,7 @@ else
 fi
 
 if [ ! -z "$libpath" ]; then
-  # assuming soldat2.app exists already
+  # assuming appname.app exists already
   mkdir -p ${appname}.app/Contents/Frameworks
 
   # copy dylibs
