@@ -973,6 +973,7 @@ var
   IsMenuInited: Boolean;
   MenuFont: ALLEGRO_FONTptr;
   MenuIndex, MenuLayer: Integer;
+  MenuPlayer: TPlayer;
 
 procedure InitMenu;
 begin
@@ -981,11 +982,27 @@ begin
     WriteLn('Error: loading menu ttf font');
   MenuIndex := 0;
   MenuLayer := 0;
+
+  MenuPlayer.w := Player.w * 2;
+  MenuPlayer.h := Player.h * 2;
+  MenuPlayer.x := (Settings.Width div 2) + Player.w * 3;
+  MenuPlayer.y := Settings.Height div 40 * 14;
+  MenuPlayer.vx := 40;
+  MenuPlayer.vy := 0;
 end;
 
 procedure DrawMenu;
 begin
   al_clear_to_color(al_map_rgb(255, 255, 255));
+
+  MenuPlayer.x := (Settings.Width div 2) + Player.w * 3 + 1 - random(2);
+  MenuPlayer.vx := 35 + random(6);
+  if MenuPlayer.vx = 41 then
+    MenuPlayer.vx := 50;
+
+  DrawPlayer(MenuPlayer);
+
+
   if MenuIndex = 0 then
   begin
     al_draw_filled_rectangle(
