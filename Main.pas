@@ -1076,6 +1076,10 @@ end;
 procedure DrawOptions;
 begin
   al_clear_to_color(al_map_rgb(255, 255, 255));
+  al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+    Settings.Width div 2, Settings.Height div 40 * 4,
+    ALLEGRO_ALIGN_CENTRE, 'Options');
+
   if OptionsIndex = 0 then
   begin
     al_draw_filled_rectangle(
