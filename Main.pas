@@ -76,7 +76,6 @@ var
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
   RatioX, RatioY: Single;
-  QuitGame: Boolean;
 
 procedure Init;
 var
@@ -972,7 +971,7 @@ end;
 var
   IsMenuInited: Boolean;
   MenuFont: ALLEGRO_FONTptr;
-  MenuIndex, MenuLayer: Integer;
+  MenuIndex: Integer;
   MenuPlayer: TPlayer;
 
 procedure InitMenu;
@@ -981,7 +980,6 @@ begin
   if MenuFont = nil then
     WriteLn('Error: loading menu ttf font');
   MenuIndex := 0;
-  MenuLayer := 0;
 
   MenuPlayer.w := Player.w * 2;
   MenuPlayer.h := Player.h * 2;
@@ -1520,7 +1518,6 @@ begin
   Writeln('Start');
 
   IsMenuInited := False;
-  QuitGame := False;
 
   Init;
   Intro;
