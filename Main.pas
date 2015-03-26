@@ -983,8 +983,8 @@ begin
 
   MenuPlayer.w := Player.w * 2;
   MenuPlayer.h := Player.h * 2;
-  MenuPlayer.x := (Settings.Width div 2) + Player.w * 3;
-  MenuPlayer.y := Settings.Height div 40 * 14;
+  MenuPlayer.x := (INTERNAL_WIDTH div 2) + Player.w;
+  MenuPlayer.y := INTERNAL_HEIGHT div 80 * 24;
   MenuPlayer.vx := 40;
   MenuPlayer.vy := 0;
 end;
@@ -993,7 +993,7 @@ procedure DrawMenu;
 begin
   al_clear_to_color(al_map_rgb(255, 255, 255));
 
-  MenuPlayer.x := (Settings.Width div 2) + Player.w * 3 + 1 - random(2);
+  MenuPlayer.x := (INTERNAL_WIDTH div 2) - Player.w + 1 - random(2);
   MenuPlayer.vx := 35 + random(6);
   if MenuPlayer.vx = 41 then
     MenuPlayer.vx := 50;
