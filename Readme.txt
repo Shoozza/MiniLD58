@@ -30,4 +30,4 @@ Assets / Resources:
 -------------------
 font.ttf                       - http://www.dafont.com/wendy.font (rename wendy into font)
 allegro-5.0.11-monolith-mt.dll - https://www.allegro.cc/files/    (rename 5.0.10 into 5.0.11)
-everything else                - https://dl.dropboxusercontent.com/u/2394029/Projects/LD/Balldr.zip
+everything else                - https://dl.dropboxusercontent.com/u/2394029/Projects/LD/MiniLD58/Balldr.zip
