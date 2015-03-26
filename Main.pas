@@ -924,7 +924,7 @@ begin
 
     case Event._type of
       ALLEGRO_EVENT_DISPLAY_CLOSE:
-        IsRunning := False;
+        Halt;
       ALLEGRO_EVENT_TIMER:
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
@@ -1249,7 +1249,7 @@ begin
 
     case Event._type of
       ALLEGRO_EVENT_DISPLAY_CLOSE:
-        IsOptionsRunning := False;
+        Halt;
       ALLEGRO_EVENT_TIMER:
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
@@ -1432,7 +1432,7 @@ begin
 
     case Event._type of
       ALLEGRO_EVENT_DISPLAY_CLOSE:
-        IsMenuRunning := False;
+        Halt;
       ALLEGRO_EVENT_TIMER:
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
