@@ -1358,37 +1358,7 @@ begin
               end;
             ALLEGRO_KEY_ENTER, ALLEGRO_KEY_SPACE:
               begin
-                if OptionsIndex = 0 then
-                begin
-                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                    ALLEGRO_PLAYMODE_ONCE, nil);
-                  if OptionsSettings.Width = 1920 then
-                  begin
-                    OptionsSettings.Width := 1280;
-                    OptionsSettings.Height := 720;
-                  end
-                  else
-                  begin
-                    OptionsSettings.Width := 1920;
-                    OptionsSettings.Height := 1080;
-                  end;
-                end
-                else if OptionsIndex = 1 then
-                begin
-                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                    ALLEGRO_PLAYMODE_ONCE, nil);
-                  OptionsSettings.Mode := (OptionsSettings.Mode + 1) mod 2;
-                end
-                else if OptionsIndex = 2 then
-                begin
-                  al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                    ALLEGRO_PLAYMODE_ONCE, nil);
-                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
-                end
-                else if OptionsIndex = 3 then
-                begin
-                end
-                else if OptionsIndex = 4 then
+                if OptionsIndex = 4 then
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
