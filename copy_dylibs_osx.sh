@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# copies dylibs required by executable
+# Use for OSX deployment:
+# Copies dylibs required by executable
 #    and sets paths up correctly
 
 if [ $# -eq 0 ]; then
