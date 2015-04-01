@@ -1282,150 +1282,71 @@ begin
   al_flip_display;
 end;
 
+const
+  MAX_OPTIONS = 4;
+  OptionsText: Array[0..MAX_OPTIONS] of string =
+  (
+    'Resolution: ', 'Fullscreen: ', 'Vsync: ', 'Sfx Volume: ', 'Save'
+  );
 var
   IsOptionsInited: Boolean;
   OptionsIndex: Integer;
   OptionsSettings: TSettings;
+  OptionsTextFull: Array[0..MAX_OPTIONS] of string;
 
 procedure InitOptions;
 begin
   OptionsSettings := Settings;
   OptionsIndex := 0;
+
+  OptionsTextFull[0] := OptionsText[0] +
+    IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height);
+  OptionsTextFull[1] := OptionsText[1] + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off');
+  OptionsTextFull[2] := OptionsText[2] + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off');
+  OptionsTextFull[3] := OptionsText[3] + IntToStr(OptionsSettings.SfxVolumeNum);
+  OptionsTextFull[4] := OptionsText[4];
 end;
 
 procedure DrawOptions;
+var
+  I, Position, PositionDefault: Integer;
 begin
   al_clear_to_color(al_map_rgb(255, 255, 255));
   al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
     Settings.Width div 2, Settings.Height div 40 * 4,
     ALLEGRO_ALIGN_CENTRE, 'Options');
 
-  if OptionsIndex = 0 then
+  Position := 12 + OptionsIndex * 4;
+  PositionDefault := 12;
+
+  for I := 0 to MAX_OPTIONS do
   begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 12,
-      Settings.Width,
-      Settings.Height div 40 * 16,
-      LeftPadShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 12,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 16,
-      LeftPadColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 12,
-      ALLEGRO_ALIGN_CENTRE, 'Resolution: ' +
-        IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height));
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 12,
-      ALLEGRO_ALIGN_CENTRE, 'Resolution: ' +
-        IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height));
+    if OptionsIndex = I then
+    begin
+      al_draw_filled_rectangle(
+        0,
+        Settings.Height div 40 * Position,
+        Settings.Width,
+        Settings.Height div 40 * (Position + 4),
+        MenuShadeColor[I]);
+      al_draw_filled_rectangle(
+        Settings.Width div 5,
+        Settings.Height div 40 * Position,
+        Settings.Width - Settings.Width div 5,
+        Settings.Height div 40 * (Position + 4),
+        MenuColor[I]);
+      al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+        Settings.Width div 2, Settings.Height div 40 * Position,
+        ALLEGRO_ALIGN_CENTRE, OptionsTextFull[I]);
+    end
+    else
+    begin
+      al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+        Settings.Width div 2, Settings.Height div 40 * (PositionDefault + 4 * I),
+        ALLEGRO_ALIGN_CENTRE, OptionsTextFull[I]);
+    end;
   end;
 
-  if OptionsIndex = 1 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 16,
-      Settings.Width,
-      Settings.Height div 40 * 20,
-      RightPadShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 16,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 20,
-      RightPadColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 16,
-      ALLEGRO_ALIGN_CENTRE, 'Fullscreen: ' + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off'));
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 16,
-      ALLEGRO_ALIGN_CENTRE, 'Fullscreen: ' + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off'));
-  end;
-
-  if OptionsIndex = 2 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 20,
-      Settings.Width,
-      Settings.Height div 40 * 24,
-      MenuPlayer.ShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 20,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 24,
-      MenuPlayer.Color);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 20,
-      ALLEGRO_ALIGN_CENTRE, 'VSync: ' + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off'));
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 20,
-      ALLEGRO_ALIGN_CENTRE, 'VSync: ' + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off'));
-  end;
-
-  if OptionsIndex = 3 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 24,
-      Settings.Width,
-      Settings.Height div 40 * 28,
-      CoinShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 24,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 28,
-      CoinColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 24,
-      ALLEGRO_ALIGN_CENTRE, 'Sfx Volume: ' + IntToStr(OptionsSettings.SfxVolumeNum));
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 24,
-      ALLEGRO_ALIGN_CENTRE, 'Sfx Volume: ' + IntToStr(OptionsSettings.SfxVolumeNum));
-  end;
-
-  if OptionsIndex = 4 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 28,
-      Settings.Width,
-      Settings.Height div 40 * 32,
-      HardCoinShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 28,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 32,
-      HardCoinColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 28,
-      ALLEGRO_ALIGN_CENTRE, 'Save');
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 28,
-      ALLEGRO_ALIGN_CENTRE, 'Save');
-  end;
   al_flip_display;
 end;
 
@@ -1488,18 +1409,22 @@ begin
                     OptionsSettings.Width := 1920;
                     OptionsSettings.Height := 1080;
                   end;
+                  OptionsTextFull[0] := OptionsText[0] +
+                    IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height);
                 end
                 else if OptionsIndex = 1 then
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
                   OptionsSettings.Mode:= (OptionsSettings.Mode + 1) mod 2;
+                  OptionsTextFull[1] := OptionsText[1] + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off');
                 end
                 else if OptionsIndex = 2 then
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
-                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
+                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2;
+                  OptionsTextFull[2] := OptionsText[2] + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off');
                 end
                 else if OptionsIndex = 3 then
                 begin
@@ -1511,6 +1436,7 @@ begin
                   OptionsSettings.SfxVolume := OptionsSettings.SfxVolumeNum / 100;
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsTextFull[3] := OptionsText[3] + IntToStr(OptionsSettings.SfxVolumeNum);
                 end
                 else if OptionsIndex = 4 then
                 begin
@@ -1532,18 +1458,22 @@ begin
                     OptionsSettings.Width := 1920;
                     OptionsSettings.Height := 1080;
                   end;
+                  OptionsTextFull[0] := OptionsText[0] +
+                    IntToStr(OptionsSettings.Width) + 'x' + IntToStr(OptionsSettings.Height);
                 end
                 else if OptionsIndex = 1 then
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
                   OptionsSettings.Mode := (OptionsSettings.Mode + 1) mod 2;
+                  OptionsTextFull[1] := OptionsText[1] + BoolToStr(OptionsSettings.Mode <> 0, 'On', 'Off');
                 end
                 else if OptionsIndex = 2 then
                 begin
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
-                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2
+                  OptionsSettings.Vsync := (OptionsSettings.Vsync + 1) mod 2;
+                  OptionsTextFull[2] := OptionsText[2] + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off');
                 end
                 else if OptionsIndex = 3 then
                 begin
@@ -1556,6 +1486,7 @@ begin
 
                   al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
                     ALLEGRO_PLAYMODE_ONCE, nil);
+                  OptionsTextFull[3] := OptionsText[3] + IntToStr(OptionsSettings.SfxVolumeNum);
                 end
                 else if OptionsIndex = 4 then
                 begin
