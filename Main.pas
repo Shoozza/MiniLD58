@@ -22,8 +22,7 @@ type
     x, y: Integer;
     w, h: Integer;
     vx, vy: Integer;
-    Color: ALLEGRO_COLOR;
-    ShadeColor: ALLEGRO_COLOR;
+    Color, ShadeColor: ALLEGRO_COLOR;
     Shake, ShakeX, ShakeY: Integer;
   end;
 
@@ -67,6 +66,7 @@ var
     HardCoinColor, HardCoinShadeColor,
     LeftPadColor, LeftPadShadeColor,
     RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
+  MenuColor, MenuShadeColor: Array [0..4] of ALLEGRO_COLOR;
   WallSound, LeftPadSound, RightPadSound,
     LostSound, SpawnSound, PointSound: ALLEGRO_SAMPLEptr;
   StartUpDelay1, StartUpDelay2: Integer;
@@ -162,12 +162,27 @@ begin
   if Font = nil then
     WriteLn('Error: loading ttf font');
 
-  BackgroundColor := al_map_rgb(255, 255, 255);
-  BackgroundShadeColor := al_map_rgb(235, 235, 235);
+  Player1.Shake := 0;
+  Player1.ShakeX := 0;
+  Player1.ShakeY := 0;
+
+  Player1.x := -100;
+  Player1.y := 100;
+  Player1.w := 80;
+  Player1.h := Player1.w;
+  Player1.vx := 0;
+  Player1.vy := 0;
+
   Player1.Color := al_map_rgb(248, 180, 93);
   Player1.ShadeColor := al_map_rgb(255, 222, 178);
+
+  Player2 := Player1;
+
   Player2.Color := al_map_rgb(202, 185, 152);
   Player2.ShadeColor := al_map_rgb(226, 217, 199);
+
+  BackgroundColor := al_map_rgb(255, 255, 255);
+  BackgroundShadeColor := al_map_rgb(235, 235, 235);
   LeftPadColor := al_map_rgb(51, 139, 209);
   LeftPadShadeColor := al_map_rgb(199, 219, 246);
   RightPadColor := al_map_rgb(230,  98, 98);
@@ -176,6 +191,18 @@ begin
   CoinShadeColor := al_map_rgb(213, 228, 202);
   HardCoinColor := al_map_rgb(184, 145, 223);
   HardCoinShadeColor := al_map_rgb(215, 202, 227);
+
+  MenuColor[0] := LeftPadColor;
+  MenuColor[1] := RightPadColor;
+  MenuColor[2] := Player1.Color;
+  MenuColor[3] := CoinColor;
+  MenuColor[4] := HardCoinColor;
+
+  MenuShadeColor[0] := LeftPadShadeColor;
+  MenuShadeColor[1] := RightPadShadeColor;
+  MenuShadeColor[2] := Player1.ShadeColor;
+  MenuShadeColor[3] := CoinShadeColor;
+  MenuShadeColor[4] := HardCoinShadeColor;
 
   for I := 1 to MAX_COINS do
   begin
@@ -194,29 +221,6 @@ begin
   KeyDown := False;
   Pause := False;
 
-  Player1.Shake := 0;
-  Player1.ShakeX := 0;
-  Player1.ShakeY := 0;
-
-  Player1.x := -100;
-  Player1.y := 100;
-  Player1.w := 80;
-  Player1.h := Player1.w;
-  Player1.vx := 0;
-  Player1.vy := 0;
-
-  Player2.Shake := 0;
-  Player2.ShakeX := 0;
-  Player2.ShakeY := 0;
-
-  Player2.x := -100;
-  Player2.y := 100;
-  Player2.w := 80;
-  Player2.h := Player2.w;
-  Player2.vx := 0;
-  Player2.vy := 0;
-
-
   Pad1.x := 0;
   Pad1.y := 0;
   Pad1.w := 60;
@@ -224,12 +228,11 @@ begin
   Pad1.vx := 0;
   Pad1.vy := 4;
 
+  Pad2 := Pad1;
+
   Pad2.x := INTERNAL_WIDTH - 60;
   Pad2.y := INTERNAL_HEIGHT - 180;
-  Pad2.w := 60;
-  Pad2.h := 180;
-  Pad2.vx := 0;
-  Pad2.vy := -4;
+  Pad2.vy := -Pad2.vy;
 end;
 
 procedure DrawScore;
@@ -1228,6 +1231,14 @@ begin
 end;
 
 procedure DrawMenu;
+const
+  MenuText: Array[0..2] of string =
+  (
+    'Start Game', 'Options', 'Exit'
+  );
+  MAX_MENU = 2;
+var
+  I, Position, PositionDefault: Integer;
 begin
   al_clear_to_color(al_map_rgb(255, 255, 255));
 
@@ -1237,81 +1248,37 @@ begin
     MenuPlayer.vx := 50;
 
   DrawPlayer(MenuPlayer);
+  Position := 24 + MenuIndex * 4;
+  PositionDefault := 24;
 
-
-  if MenuIndex = 0 then
+  for I := 0 to MAX_MENU do
   begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 24,
-      Settings.Width,
-      Settings.Height div 40 * 28,
-      LeftPadShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 24,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 28,
-      LeftPadColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 24,
-      ALLEGRO_ALIGN_CENTRE, 'Start Game');
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 24,
-      ALLEGRO_ALIGN_CENTRE, 'Start Game');
-  end;
-  if MenuIndex = 1 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 28,
-      Settings.Width,
-      Settings.Height div 40 * 32,
-      RightPadShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 28,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 32,
-      RightPadColor);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 28,
-      ALLEGRO_ALIGN_CENTRE, 'Options');
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 28,
-      ALLEGRO_ALIGN_CENTRE, 'Options');
+    if MenuIndex = I then
+    begin
+      al_draw_filled_rectangle(
+        0,
+        Settings.Height div 40 * Position,
+        Settings.Width,
+        Settings.Height div 40 * (Position + 4),
+        MenuShadeColor[I]);
+      al_draw_filled_rectangle(
+        Settings.Width div 5,
+        Settings.Height div 40 * Position,
+        Settings.Width - Settings.Width div 5,
+        Settings.Height div 40 * (Position + 4),
+        MenuColor[I]);
+      al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
+        Settings.Width div 2, Settings.Height div 40 * Position,
+        ALLEGRO_ALIGN_CENTRE, MenuText[I]);
+    end
+    else
+    begin
+      al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
+        Settings.Width div 2, Settings.Height div 40 * (PositionDefault + 4 * I),
+        ALLEGRO_ALIGN_CENTRE, MenuText[I]);
+    end;
   end;
 
-  if MenuIndex = 2 then
-  begin
-    al_draw_filled_rectangle(
-      0,
-      Settings.Height div 40 * 32,
-      Settings.Width,
-      Settings.Height div 40 * 36,
-      MenuPlayer.ShadeColor);
-    al_draw_filled_rectangle(
-      Settings.Width div 5,
-      Settings.Height div 40 * 32,
-      Settings.Width - Settings.Width div 5,
-      Settings.Height div 40 * 36,
-      MenuPlayer.Color);
-    al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
-      Settings.Width div 2, Settings.Height div 40 * 32,
-      ALLEGRO_ALIGN_CENTRE, 'Exit');
-  end
-  else
-  begin
-    al_draw_text(MenuFont, al_map_rgb(77, 77, 77),
-      Settings.Width div 2, Settings.Height div 40 * 32,
-      ALLEGRO_ALIGN_CENTRE, 'Exit');
-  end;
   al_flip_display;
 end;
 
