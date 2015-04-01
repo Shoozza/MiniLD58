@@ -63,8 +63,6 @@ var
   Settings: TSettings;
   Ini: TMemIniFile;
   BackgroundColor, BackgroundShadeColor,
-    Player1Color, Player1ShadeColor,
-    Player2Color, Player2ShadeColor,
     CoinColor, CoinShadeColor,
     HardCoinColor, HardCoinShadeColor,
     LeftPadColor, LeftPadShadeColor,
@@ -166,14 +164,10 @@ begin
 
   BackgroundColor := al_map_rgb(255, 255, 255);
   BackgroundShadeColor := al_map_rgb(235, 235, 235);
-  Player1Color := al_map_rgb(248, 180, 93);
-  Player1ShadeColor := al_map_rgb(255, 222, 178);
-  Player2Color := al_map_rgb(202, 185, 152);
-  Player2ShadeColor := al_map_rgb(226, 217, 199);
-  Player1.Color := Player1Color;
-  Player2.Color := Player2Color;
-  Player1.ShadeColor := Player1ShadeColor;
-  Player2.ShadeColor := Player2ShadeColor;
+  Player1.Color := al_map_rgb(248, 180, 93);
+  Player1.ShadeColor := al_map_rgb(255, 222, 178);
+  Player2.Color := al_map_rgb(202, 185, 152);
+  Player2.ShadeColor := al_map_rgb(226, 217, 199);
   LeftPadColor := al_map_rgb(51, 139, 209);
   LeftPadShadeColor := al_map_rgb(199, 219, 246);
   RightPadColor := al_map_rgb(230,  98, 98);
@@ -1301,13 +1295,13 @@ begin
       Settings.Height div 40 * 32,
       Settings.Width,
       Settings.Height div 40 * 36,
-      Player1ShadeColor);
+      MenuPlayer.ShadeColor);
     al_draw_filled_rectangle(
       Settings.Width div 5,
       Settings.Height div 40 * 32,
       Settings.Width - Settings.Width div 5,
       Settings.Height div 40 * 36,
-      Player1Color);
+      MenuPlayer.Color);
     al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
       Settings.Width div 2, Settings.Height div 40 * 32,
       ALLEGRO_ALIGN_CENTRE, 'Exit');
@@ -1398,13 +1392,13 @@ begin
       Settings.Height div 40 * 20,
       Settings.Width,
       Settings.Height div 40 * 24,
-      Player1ShadeColor);
+      MenuPlayer.ShadeColor);
     al_draw_filled_rectangle(
       Settings.Width div 5,
       Settings.Height div 40 * 20,
       Settings.Width - Settings.Width div 5,
       Settings.Height div 40 * 24,
-      Player1Color);
+      MenuPlayer.Color);
     al_draw_text(MenuFont, al_map_rgb(255, 255, 255),
       Settings.Width div 2, Settings.Height div 40 * 20,
       ALLEGRO_ALIGN_CENTRE, 'VSync: ' + BoolToStr(OptionsSettings.Vsync <> 0, 'On', 'Off'));
