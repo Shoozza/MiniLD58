@@ -15,17 +15,10 @@ uses
   al5acodec,
   al5font,
   al5ttf,
-  al5Image;
+  al5Image,
+  Player;
 
 type
-  TPlayer = record
-    x, y: Integer;
-    w, h: Integer;
-    vx, vy: Integer;
-    Color, ShadeColor: ALLEGRO_COLOR;
-    Shake, ShakeX, ShakeY: Integer;
-  end;
-
   TPad = record
     x, y: Integer;
     w, h: Integer;
