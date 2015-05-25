@@ -18,10 +18,28 @@ type
 var
   RatioX, RatioY: Single;
 
+procedure InitPlayer(var Player: TPlayer);
 procedure DrawPlayer(var Player: TPlayer);
   
 
 implementation
+
+procedure InitPlayer(var Player: TPlayer);
+begin
+  Player.Shake := 0;
+  Player.ShakeX := 0;
+  Player.ShakeY := 0;
+
+  Player.x := -100;
+  Player.y := 100;
+  Player.w := 80;
+  Player.h := Player.w;
+  Player.vx := 0;
+  Player.vy := 0;
+
+  Player.Color := al_map_rgb(248, 180, 93);
+  Player.ShadeColor := al_map_rgb(255, 222, 178);
+end;
 
 procedure DrawPlayer(var Player: TPlayer);
 var

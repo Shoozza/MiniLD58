@@ -154,21 +154,8 @@ begin
   if Font = nil then
     WriteLn('Error: loading ttf font');
 
-  Player1.Shake := 0;
-  Player1.ShakeX := 0;
-  Player1.ShakeY := 0;
-
-  Player1.x := -100;
-  Player1.y := 100;
-  Player1.w := 80;
-  Player1.h := Player1.w;
-  Player1.vx := 0;
-  Player1.vy := 0;
-
-  Player1.Color := al_map_rgb(248, 180, 93);
-  Player1.ShadeColor := al_map_rgb(255, 222, 178);
-
-  Player2 := Player1;
+  InitPlayer(Player1);
+  InitPlayer(Player2);
 
   Player2.Color := al_map_rgb(202, 185, 152);
   Player2.ShadeColor := al_map_rgb(226, 217, 199);
