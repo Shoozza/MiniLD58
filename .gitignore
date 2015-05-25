@@ -6,7 +6,10 @@
 *.o
 *.png
 *.ppu
+*.swp
 *.ttf
 *.wav
 *.~*
+.DS_STORE
 Backup
+bin/
