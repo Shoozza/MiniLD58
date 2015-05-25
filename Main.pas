@@ -501,11 +501,8 @@ begin
   end;
 
   // move
-  Player1.x := Player1.x + Player1.vx;
-  Player1.y := Player1.y + Player1.vy;
-
-  Player2.x := Player2.x + Player2.vx;
-  Player2.y := Player2.y + Player2.vy;
+  UpdatePlayer(Player1);
+  UpdatePlayer(Player2);
 
   Pad1.x := Pad1.x + Pad1.vx;
   Pad1.y := Pad1.y + Pad1.vy;

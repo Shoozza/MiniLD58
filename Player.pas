@@ -20,6 +20,7 @@ var
 
 procedure InitPlayer(var Player: TPlayer);
 procedure DrawPlayer(var Player: TPlayer);
+procedure UpdatePlayer(var Player: TPlayer);
   
 
 implementation
@@ -159,4 +160,11 @@ begin
     (Player.x+Player.w+Player.ShakeX) * RatioX, (Player.y+Player.h+Player.ShakeY) * RatioY,
     Player.Color);
 end;
+
+procedure UpdatePlayer(var Player: TPlayer);
+begin
+  Player.x := Player.x + Player.vx;
+  Player.y := Player.y + Player.vy;
+end;
+
 end.
