@@ -3,6 +3,7 @@ unit Player;
 interface
 
 uses
+  Global,
   al5primitives,
   Allegro5;
 
@@ -14,9 +15,6 @@ type
     Color, ShadeColor: ALLEGRO_COLOR;
     Shake, ShakeX, ShakeY: Integer;
   end;
-
-var
-  RatioX, RatioY: Single;
 
 procedure InitPlayer(var Player: TPlayer);
 procedure DrawPlayer(var Player: TPlayer);
