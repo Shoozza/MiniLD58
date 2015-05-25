@@ -394,6 +394,7 @@ begin
   al_clear_to_color(BackgroundColor);
   DrawScore;
 
+  // TODO: should this be in player unit?
   if Player1.Shake > 0 then
   begin
     Dec(Player1.Shake);
