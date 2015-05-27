@@ -90,7 +90,10 @@ begin
 
   Display := al_create_display(Settings.Width, Settings.Height);
   if Display = nil then
+  begin
     WriteLn('Error: Cannot create window');
+    Halt;
+  end;
 
   al_clear_to_color(al_map_rgb(164, 164, 164));
   al_flip_display;
