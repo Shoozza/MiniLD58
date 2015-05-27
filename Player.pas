@@ -19,7 +19,7 @@ type
 procedure InitPlayer(var Player: TPlayer);
 procedure DrawPlayer(var Player: TPlayer);
 procedure UpdatePlayer(var Player: TPlayer);
-  
+
 
 implementation
 
