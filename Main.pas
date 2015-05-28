@@ -191,14 +191,8 @@ begin
   KeyDown := False;
   Pause := False;
 
-  Pad1.x := 0;
-  Pad1.y := 0;
-  Pad1.w := 60;
-  Pad1.h := 180;
-  Pad1.vx := 0;
-  Pad1.vy := 4;
-
-  Pad2 := Pad1;
+  InitPad(Pad1);
+  InitPad(Pad2);
 
   Pad2.x := INTERNAL_WIDTH - 60;
   Pad2.y := INTERNAL_HEIGHT - 180;
