@@ -43,8 +43,6 @@ var
   Settings: TSettings;
   Ini: TMemIniFile;
   BackgroundColor, BackgroundShadeColor,
-    CoinColor, CoinShadeColor,
-    HardCoinColor, HardCoinShadeColor,
     LeftPadColor, LeftPadShadeColor,
     RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
   MenuColor, MenuShadeColor: Array [0..4] of ALLEGRO_COLOR;
