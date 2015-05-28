@@ -14,11 +14,22 @@ type
     vx, vy: Integer;
   end;
 
+procedure InitPad(var Pad: TPad);
 procedure DrawPad(var Pad: TPad;
   var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
 
 
 implementation
+
+procedure InitPad(var Pad: TPad);
+begin
+  Pad.x := 0;
+  Pad.y := 0;
+  Pad.w := 60;
+  Pad.h := 180;
+  Pad.vx := 0;
+  Pad.vy := 4;
+end;
 
 procedure DrawPad(var Pad: TPad;
   var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
