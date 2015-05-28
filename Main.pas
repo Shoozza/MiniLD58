@@ -18,18 +18,10 @@ uses
   al5Image,
   Global,
   Player,
-  Pad;
+  Pad,
+  Coin;
 
 type
-  TCoin = record
-    x, y: Integer;
-    w, h: Integer;
-    vx, vy: Integer;
-    Active: Integer;
-    Hits: Integer;
-    Shake, ShakeX, ShakeY: Integer;
-  end;
-
   TSettings = record
     Width, Height, Mode, Vsync: Integer;
     SfxVolumeNum: Integer;
