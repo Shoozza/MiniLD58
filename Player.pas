@@ -48,6 +48,19 @@ var
 const
   LEN = 10;
 begin
+  if Player.Shake > 0 then
+  begin
+    Dec(Player.Shake);
+    Player.ShakeX := random(35);
+    Player.ShakeY := random(35);
+  end
+  else if Player.Shake = 0 then
+  begin
+    Dec(Player.Shake);
+    Player.ShakeX := 0;
+    Player.ShakeY := 0;
+  end;
+
   x1 := 0;
   x2 := 0;
   x3 := 0;

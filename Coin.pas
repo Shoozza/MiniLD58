@@ -29,6 +29,19 @@ var
 const
   LEN = 10;
 begin
+  if Coin.Shake > 0 then
+  begin
+    Dec(Coin.Shake);
+    Coin.ShakeX := random(35);
+    Coin.ShakeY := random(35);
+  end
+  else if Coin.Shake = 0 then
+  begin
+    Dec(Coin.Shake);
+    Coin.ShakeX := 0;
+    Coin.ShakeY := 0;
+  end;
+
   x1 := 0;
   x2 := 0;
   x3 := 0;
