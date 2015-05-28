@@ -158,12 +158,7 @@ begin
   MenuShadeColor[4] := HardCoinShadeColor;
 
   for I := 1 to MAX_COINS do
-  begin
-    Coins[I].Active := 0;
-    Coins[I].w := 80;
-    Coins[I].h := 80;
-    Coins[I].Shake := 0;
-  end;
+    InitCoin(Coins[I]);
 
   BestScore := 0;
   Score := 0;

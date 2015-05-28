@@ -12,6 +12,7 @@ type
     Shake, ShakeX, ShakeY: Integer;
   end;
 
+procedure InitCoin(var Coin: TCoin);
 procedure DrawCoin(var Coin: TCoin);
 
 
@@ -20,6 +21,14 @@ implementation
 uses
   al5primitives,
   Global;
+
+procedure InitCoin(var Coin: TCoin);
+begin
+  Coin.Active := 0;
+  Coin.w := 80;
+  Coin.h := 80;
+  Coin.Shake := 0;
+end;
 
 procedure DrawCoin(var Coin: TCoin);
 var
