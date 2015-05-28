@@ -8,7 +8,6 @@ implementation
 
 uses
   SysUtils,
-  IniFiles,
   Allegro5,
   al5primitives,
   al5audio,
@@ -19,14 +18,8 @@ uses
   Global,
   Player,
   Pad,
-  Coin;
-
-type
-  TSettings = record
-    Width, Height, Mode, Vsync: Integer;
-    SfxVolumeNum: Integer;
-    SfxVolume: Single;
-  end;
+  Coin,
+  GameSettings;
 
 const
   MAX_COINS = 2;
@@ -41,7 +34,6 @@ var
   Pad1, Pad2: TPad;
   Coins: Array [1..MAX_COINS] of TCoin;
   Settings: TSettings;
-  Ini: TMemIniFile;
   BackgroundColor, BackgroundShadeColor,
     LeftPadColor, LeftPadShadeColor,
     RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
@@ -61,14 +53,7 @@ var
   I: Integer;
 begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
-  Ini := TMemIniFile.Create('config.ini');
-
-  Settings.Width := Ini.ReadInteger('GENERAL', 'Screen_Width', 1920);
-  Settings.Height := Ini.ReadInteger('GENERAL', 'Screen_Height', 1080);
-  Settings.Mode := Ini.ReadInteger('GENERAL', 'Fullscreen', 0);
-  Settings.Vsync := Ini.ReadInteger('GENERAL', 'VSync', 0);
-  Settings.SfxVolumeNum := Ini.ReadInteger('GENERAL', 'Sfx_Volume', 50);
-  Settings.SfxVolume := Settings.SfxVolumeNum / 100;
+  InitSettings(Settings, 'config.ini');
 
   al_init;
   if Settings.Mode = 0 then
@@ -1252,12 +1237,8 @@ end;
 
 procedure Clean;
 begin
-  Ini.WriteInteger('GENERAL', 'Screen_Width', Settings.Width);
-  Ini.WriteInteger('GENERAL', 'Screen_Height', Settings.Height);
-  Ini.WriteInteger('GENERAL', 'Fullscreen', Settings.Mode);
-  Ini.WriteInteger('GENERAL', 'Vsync', Settings.Vsync);
-  Ini.WriteInteger('GENERAL', 'Sfx_Volume', Settings.SfxVolumeNum);
-  Ini.Free;
+  SaveSettings(Settings);
+  DestroySettings(Settings);
 end;
 
 procedure Run;
