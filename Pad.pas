@@ -17,6 +17,7 @@ type
 procedure InitPad(var Pad: TPad);
 procedure DrawPad(var Pad: TPad;
   var PadColor: ALLEGRO_COLOR; var PadShadeColor: ALLEGRO_COLOR);
+procedure UpdatePad(var Pad: TPad);
 
 
 implementation
@@ -43,6 +44,12 @@ begin
   else if Pad.vy < 0 then
     al_draw_filled_rectangle(Pad.x*RatioX, (Pad.y+Pad.h)*RatioY,
       (Pad.x+Pad.w)*RatioX, (Pad.y+Pad.h-Pad.vy*10)*RatioY, PadShadeColor);
+end;
+
+procedure UpdatePad(var Pad: TPad);
+begin
+  Pad.x := Pad.x + Pad.vx;
+  Pad.y := Pad.y + Pad.vy;
 end;
 
 end.

@@ -291,11 +291,8 @@ begin
   UpdatePlayer(Player1);
   UpdatePlayer(Player2);
 
-  Pad1.x := Pad1.x + Pad1.vx;
-  Pad1.y := Pad1.y + Pad1.vy;
-
-  Pad2.x := Pad2.x + Pad2.vx;
-  Pad2.y := Pad2.y + Pad2.vy;
+  UpdatePad(Pad1);
+  UpdatePad(Pad2);
 
   for I := 1 to MAX_COINS do
   begin
