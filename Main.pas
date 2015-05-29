@@ -42,11 +42,19 @@ var
     LostSound, SpawnSound, PointSound: ALLEGRO_SAMPLEptr;
   StartUpDelay1, StartUpDelay2: Integer;
   KeyS, KeyW: Boolean;
+  KeyA, KeyD: Boolean;
+  KeyP, KeyPause: Boolean;
   KeyUp, KeyDown: Boolean;
+  KeyLeft, KeyRight: Boolean;
   Score: Integer;
   BestScore: Integer;
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
+  Input1KeyDown, Input2KeyDown: Integer;
+  Input1KeyUp, Input2KeyUp: Integer;
+  Input1KeyLeft, Input2KeyLeft: Integer;
+  Input1KeyRight, Input2KeyRight: Integer;
+  Input1KeyPause, Input2KeyPause: Integer;
 
 procedure Init;
 var
@@ -54,6 +62,18 @@ var
 begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   InitSettings(Settings, 'config.ini');
+
+  Input1KeyUp    := ALLEGRO_KEY_W;
+  Input1KeyDown  := ALLEGRO_KEY_S;
+  Input1KeyLeft  := ALLEGRO_KEY_A;
+  Input1KeyRight := ALLEGRO_KEY_D;
+  Input1KeyPause := ALLEGRO_KEY_P;
+
+  Input2KeyUp   := ALLEGRO_KEY_UP;
+  Input2KeyDown := ALLEGRO_KEY_DOWN;
+  Input2KeyLeft  := ALLEGRO_KEY_LEFT;
+  Input2KeyRight := ALLEGRO_KEY_RIGHT;
+  Input2KeyPause := ALLEGRO_KEY_ENTER;
 
   if not al_init then
   begin
@@ -179,8 +199,15 @@ begin
 
   KeyW := False;
   KeyS := False;
+  KeyA := False;
+  KeyD := False;
+  KeyP := False;
+
   KeyUp := False;
   KeyDown := False;
+  KeyLeft := False;
+  KeyRight := False;
+  KeyPause := False;
   Pause := False;
 
   InitPad(Pad1);
@@ -572,7 +599,6 @@ begin
         Player1.vy := Trunc(Player1.vy*1.5)
       else
         Player1.vy := Trunc(Player1.vy*1.1);
-
     end
     else
     begin
@@ -781,62 +807,82 @@ begin
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
         begin
-          case Event.Keyboard.KeyCode of
-            ALLEGRO_KEY_S:
-              KeyS := True;
-            ALLEGRO_KEY_DOWN:
-              KeyDown := True;
-            ALLEGRO_KEY_W:
-              KeyW := True;
-            ALLEGRO_KEY_UP:
-              KeyUp := True;
-            ALLEGRO_KEY_D:
-              if (not Pause) and (Player1.vx = 0) then
-              begin
-                Player1.vx := 10;
-                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                  ALLEGRO_PLAYMODE_ONCE, nil)
-              end;
-            ALLEGRO_KEY_RIGHT:
-              if (not Pause) and (Player2.vx = 0) then
-              begin
-                Player2.vx := 10;
-                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                  ALLEGRO_PLAYMODE_ONCE, nil)
-              end;
-            ALLEGRO_KEY_A:
-              if (not Pause) and (Player1.vx = 0) then
-              begin
-                Player1.vx := -10;
-                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                  ALLEGRO_PLAYMODE_ONCE, nil)
-              end;
-            ALLEGRO_KEY_LEFT:
-              if (not Pause) and (Player2.vx = 0) then
-              begin
-                Player2.vx := -10;
-                al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                  ALLEGRO_PLAYMODE_ONCE, nil)
-              end;
-            ALLEGRO_KEY_P:
-              Pause := not Pause;
+          // player1 input
+          if Event.Keyboard.KeyCode = Input1KeyUp then
+            KeyW := True
+          else if Event.Keyboard.KeyCode = Input1KeyDown then
+            KeyS := True
+          else if Event.Keyboard.KeyCode = Input1KeyLeft then
+          begin
+            KeyA := True;
+            if (not Pause) and (Player1.vx = 0) then
+            begin
+              Player1.vx := -10;
+              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                ALLEGRO_PLAYMODE_ONCE, nil)
+            end;
+          end
+          else if Event.Keyboard.KeyCode = Input1KeyRight then
+          begin
+            KeyD := True;
+            if (not Pause) and (Player1.vx = 0) then
+            begin
+              Player1.vx := 10;
+              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                ALLEGRO_PLAYMODE_ONCE, nil)
+            end;
+          end
+          else if Event.Keyboard.KeyCode = Input1KeyPause then
+          begin
+            KeyP := True;
+            Pause := not Pause;
+          end
 
-            ALLEGRO_KEY_ESCAPE:
-              IsRunning := False;
-          end;
+          // player2 input
+          else if Event.Keyboard.KeyCode = Input2KeyDown then
+            KeyDown := True
+          else if Event.Keyboard.KeyCode = Input2KeyUp then
+            KeyUp := True
+          else if Event.Keyboard.KeyCode = Input2KeyLeft then
+          begin
+            KeyLeft := True;
+            if (not Pause) and (Player2.vx = 0) then
+            begin
+              Player2.vx := -10;
+              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                ALLEGRO_PLAYMODE_ONCE, nil)
+            end;
+          end
+          else if Event.Keyboard.KeyCode = Input2KeyRight then
+          begin
+            KeyRight := True;
+            if (not Pause) and (Player2.vx = 0) then
+            begin
+              Player2.vx := 10;
+              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+                ALLEGRO_PLAYMODE_ONCE, nil)
+            end;
+          end
+          else if Event.Keyboard.KeyCode = Input2KeyPause then
+          begin
+            KeyPause := True;
+            Pause := not Pause;
+          end
+
+          // common keys
+          else if Event.Keyboard.KeyCode = ALLEGRO_KEY_ESCAPE then
+            IsRunning := False;
         end;
       ALLEGRO_EVENT_KEY_UP:
         begin
-          case Event.Keyboard.KeyCode of
-            ALLEGRO_KEY_S:
-              KeyS := False;
-            ALLEGRO_KEY_DOWN:
+          if Event.Keyboard.KeyCode = Input1KeyUp then
+              KeyW := False
+          else if Event.Keyboard.KeyCode = Input1KeyDown then
+              KeyS := False
+          else if Event.Keyboard.KeyCode = Input2KeyUp then
+              KeyUp := False
+          else if Event.Keyboard.KeyCode = Input2KeyDown then
               KeyDown := False;
-            ALLEGRO_KEY_W:
-              KeyW := False;
-            ALLEGRO_KEY_UP:
-              KeyUp := False;
-          end;
         end;
     end;
   end;
