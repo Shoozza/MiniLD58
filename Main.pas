@@ -1251,6 +1251,10 @@ begin
 end;
 
 procedure Run;
+const
+  INDEX_START = 0;
+  INDEX_OPTIONS = 1;
+  INDEX_EXIT = 2;
 begin
   Writeln('Start');
 
@@ -1260,11 +1264,11 @@ begin
   Intro;
   repeat
     Menu;
-     if MenuIndex = 0 then
+     if MenuIndex = INDEX_START then
        Loop
-     else if MenuIndex = 1 then
+     else if MenuIndex = INDEX_OPTIONS then
        Options;
-  until MenuIndex = 2;
+  until MenuIndex = INDEX_EXIT;
   Clean;
 
   Writeln('End');
