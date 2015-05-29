@@ -55,7 +55,12 @@ begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   InitSettings(Settings, 'config.ini');
 
-  al_init;
+  if not al_init then
+  begin
+    WriteLn('Error: al_init');
+    Halt;
+  end;
+
   if Settings.Mode = 0 then
     al_set_new_display_flags(ALLEGRO_WINDOWED)
   else if Settings.Mode = 1 then
@@ -79,21 +84,30 @@ begin
 
   Randomize;
 
-  al_init_image_addon;
+  if not al_init_image_addon then
+    WriteLn('Error: al_init_image_addon');
   al_init_font_addon;
-  al_init_ttf_addon;
-  al_init_primitives_addon;
+  if not al_init_ttf_addon then
+    WriteLn('Error: al_init_ttf_addon');
+  if not al_init_primitives_addon then
+    WriteLn('Error: al_init_primitives_addon');
 
   al_init_acodec_addon;
   if not al_install_audio then
-    Writeln('error: al_install_audio');
+    Writeln('Error: al_install_audio');
   if not al_reserve_samples(16) then
-    Writeln('error: al_reserve_samples');
+    Writeln('Error: al_reserve_samples');
 
-  al_install_keyboard;
+  if not al_install_keyboard then
+    Writeln('Error: al_install_keyboard');
 
   Timer := al_create_timer(1.0 / 60.0);
+  if Timer = nil then
+    Writeln('Error: al_create_timer');
+
   Queue := al_create_event_queue;
+  if Queue = nil then
+    Writeln('Error: al_create_event_queue');
 
   al_register_event_source(Queue, al_get_display_event_source(display));
   al_register_event_source(Queue, al_get_timer_event_source(Timer));
