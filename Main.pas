@@ -148,16 +148,16 @@ begin
   Player2.Color := al_map_rgb(202, 185, 152);
   Player2.ShadeColor := al_map_rgb(226, 217, 199);
 
-  BackgroundColor := al_map_rgb(255, 255, 255);
+  BackgroundColor      := al_map_rgb(255, 255, 255);
   BackgroundShadeColor := al_map_rgb(235, 235, 235);
-  LeftPadColor := al_map_rgb(51, 139, 209);
-  LeftPadShadeColor := al_map_rgb(199, 219, 246);
-  RightPadColor := al_map_rgb(230,  98, 98);
-  RightPadShadeColor := al_map_rgb(251, 185, 185);
-  CoinColor := al_map_rgb(175, 223, 142);
-  CoinShadeColor := al_map_rgb(213, 228, 202);
-  HardCoinColor := al_map_rgb(184, 145, 223);
-  HardCoinShadeColor := al_map_rgb(215, 202, 227);
+  LeftPadColor         := al_map_rgb( 51, 139, 209);
+  LeftPadShadeColor    := al_map_rgb(199, 219, 246);
+  RightPadColor        := al_map_rgb(230,  98, 98);
+  RightPadShadeColor   := al_map_rgb(251, 185, 185);
+  CoinColor            := al_map_rgb(175, 223, 142);
+  CoinShadeColor       := al_map_rgb(213, 228, 202);
+  HardCoinColor        := al_map_rgb(184, 145, 223);
+  HardCoinShadeColor   := al_map_rgb(215, 202, 227);
 
   MenuColor[0] := LeftPadColor;
   MenuColor[1] := RightPadColor;
