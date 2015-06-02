@@ -648,7 +648,6 @@ begin
 
   if IsDown(GAMEKEY_UP_2) then
   begin
-    WriteLn('Player2 up');
     if Player2.vy > 0 then
     begin
       if Player2.vy < 2 then
