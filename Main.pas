@@ -19,7 +19,8 @@ uses
   Player,
   Pad,
   Coin,
-  GameSettings;
+  GameSettings,
+  Input;
 
 const
   MAX_COINS = 2;
@@ -41,20 +42,11 @@ var
   WallSound, LeftPadSound, RightPadSound,
     LostSound, SpawnSound, PointSound: ALLEGRO_SAMPLEptr;
   StartUpDelay1, StartUpDelay2: Integer;
-  KeyS, KeyW: Boolean;
-  KeyA, KeyD: Boolean;
-  KeyP, KeyPause: Boolean;
-  KeyUp, KeyDown: Boolean;
-  KeyLeft, KeyRight: Boolean;
   Score: Integer;
   BestScore: Integer;
   Font: ALLEGRO_FONTptr;
   Pause: Boolean;
-  Input1KeyDown, Input2KeyDown: Integer;
-  Input1KeyUp, Input2KeyUp: Integer;
-  Input1KeyLeft, Input2KeyLeft: Integer;
-  Input1KeyRight, Input2KeyRight: Integer;
-  Input1KeyPause, Input2KeyPause: Integer;
+  IsRunning: Boolean;
 
 procedure Init;
 var
@@ -63,17 +55,7 @@ begin
   SetCurrentDir(ExtractFilePath(ParamStr(0)));
   InitSettings(Settings, 'config.ini');
 
-  Input1KeyUp    := ALLEGRO_KEY_W;
-  Input1KeyDown  := ALLEGRO_KEY_S;
-  Input1KeyLeft  := ALLEGRO_KEY_A;
-  Input1KeyRight := ALLEGRO_KEY_D;
-  Input1KeyPause := ALLEGRO_KEY_P;
-
-  Input2KeyUp   := ALLEGRO_KEY_UP;
-  Input2KeyDown := ALLEGRO_KEY_DOWN;
-  Input2KeyLeft  := ALLEGRO_KEY_LEFT;
-  Input2KeyRight := ALLEGRO_KEY_RIGHT;
-  Input2KeyPause := ALLEGRO_KEY_ENTER;
+  InitInput;
 
   if not al_init then
   begin
@@ -197,17 +179,6 @@ begin
   BestScore := 0;
   Score := 0;
 
-  KeyW := False;
-  KeyS := False;
-  KeyA := False;
-  KeyD := False;
-  KeyP := False;
-
-  KeyUp := False;
-  KeyDown := False;
-  KeyLeft := False;
-  KeyRight := False;
-  KeyPause := False;
   Pause := False;
 
   InitPad(Pad1);
@@ -577,10 +548,48 @@ end;
 
 procedure HandleInput;
 begin
+  if (IsDownNew(GAMEKEY_PAUSE)) or (IsDownNew(GAMEKEY_PAUSE_2)) then
+    Pause := not Pause;
+
+  if (IsDown(GAMEKEY_CANCEL)) or (IsDown(GAMEKEY_CANCEL_2)) then
+    IsRunning := False;
+
   if Pause then
     Exit;
 
-  if KeyW then
+  if Player1.vx = 0 then
+  begin
+    if IsDown(GAMEKEY_LEFT) then
+    begin
+      Player1.vx := -10;
+      al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+        ALLEGRO_PLAYMODE_ONCE, nil)
+    end
+    else if IsDown(GAMEKEY_RIGHT) then
+    begin
+      Player1.vx := 10;
+      al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+        ALLEGRO_PLAYMODE_ONCE, nil)
+    end;
+  end;
+
+  if Player2.vx = 0 then
+  begin
+    if IsDown(GAMEKEY_LEFT_2) then
+    begin
+      Player2.vx := -10;
+      al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+        ALLEGRO_PLAYMODE_ONCE, nil)
+    end
+    else if IsDown(GAMEKEY_RIGHT_2) then
+    begin
+      Player2.vx := 10;
+      al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
+        ALLEGRO_PLAYMODE_ONCE, nil)
+    end;
+  end;
+
+  if IsDown(GAMEKEY_UP) then
   begin
     if Player1.vy > 0 then
     begin
@@ -606,7 +615,7 @@ begin
     end;
   end;
 
-  if KeyS then
+  if IsDown(GAMEKEY_DOWN) then
   begin
     if Player1.vy > 0 then
     begin
@@ -642,8 +651,9 @@ begin
   else if Player1.vx < -50 then
     Player1.vx := -50;
 
-  if KeyUp then
+  if IsDown(GAMEKEY_UP_2) then
   begin
+    WriteLn('Player2 up');
     if Player2.vy > 0 then
     begin
       if Player2.vy < 2 then
@@ -669,7 +679,7 @@ begin
     end;
   end;
 
-  if KeyDown then
+  if IsDown(GAMEKEY_DOWN_2) then
   begin
     if Player2.vy > 0 then
     begin
@@ -779,9 +789,10 @@ end;
 
 procedure Loop;
 var
-  IsRunning, ShouldDraw: boolean;
+  ShouldDraw: boolean;
   Event: ALLEGRO_EVENT;
 begin
+  ClearInput;
   IsRunning := True;
   ShouldDraw := True;
 
@@ -793,6 +804,7 @@ begin
     if (ShouldDraw) and (al_is_event_queue_empty(Queue)) then
     begin
       HandleInput;
+      SwapInput;
       Update;
       Draw;
       ShouldDraw := False;
@@ -806,84 +818,9 @@ begin
       ALLEGRO_EVENT_TIMER:
         ShouldDraw := True;
       ALLEGRO_EVENT_KEY_DOWN:
-        begin
-          // player1 input
-          if Event.Keyboard.KeyCode = Input1KeyUp then
-            KeyW := True
-          else if Event.Keyboard.KeyCode = Input1KeyDown then
-            KeyS := True
-          else if Event.Keyboard.KeyCode = Input1KeyLeft then
-          begin
-            KeyA := True;
-            if (not Pause) and (Player1.vx = 0) then
-            begin
-              Player1.vx := -10;
-              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                ALLEGRO_PLAYMODE_ONCE, nil)
-            end;
-          end
-          else if Event.Keyboard.KeyCode = Input1KeyRight then
-          begin
-            KeyD := True;
-            if (not Pause) and (Player1.vx = 0) then
-            begin
-              Player1.vx := 10;
-              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                ALLEGRO_PLAYMODE_ONCE, nil)
-            end;
-          end
-          else if Event.Keyboard.KeyCode = Input1KeyPause then
-          begin
-            KeyP := True;
-            Pause := not Pause;
-          end
-
-          // player2 input
-          else if Event.Keyboard.KeyCode = Input2KeyDown then
-            KeyDown := True
-          else if Event.Keyboard.KeyCode = Input2KeyUp then
-            KeyUp := True
-          else if Event.Keyboard.KeyCode = Input2KeyLeft then
-          begin
-            KeyLeft := True;
-            if (not Pause) and (Player2.vx = 0) then
-            begin
-              Player2.vx := -10;
-              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                ALLEGRO_PLAYMODE_ONCE, nil)
-            end;
-          end
-          else if Event.Keyboard.KeyCode = Input2KeyRight then
-          begin
-            KeyRight := True;
-            if (not Pause) and (Player2.vx = 0) then
-            begin
-              Player2.vx := 10;
-              al_play_sample(SpawnSound, Settings.SfxVolume, 0.0, 1.0,
-                ALLEGRO_PLAYMODE_ONCE, nil)
-            end;
-          end
-          else if Event.Keyboard.KeyCode = Input2KeyPause then
-          begin
-            KeyPause := True;
-            Pause := not Pause;
-          end
-
-          // common keys
-          else if Event.Keyboard.KeyCode = ALLEGRO_KEY_ESCAPE then
-            IsRunning := False;
-        end;
+        UpdateKeyboard(Event.Keyboard.KeyCode, True);
       ALLEGRO_EVENT_KEY_UP:
-        begin
-          if Event.Keyboard.KeyCode = Input1KeyUp then
-              KeyW := False
-          else if Event.Keyboard.KeyCode = Input1KeyDown then
-              KeyS := False
-          else if Event.Keyboard.KeyCode = Input2KeyUp then
-              KeyUp := False
-          else if Event.Keyboard.KeyCode = Input2KeyDown then
-              KeyDown := False;
-        end;
+        UpdateKeyboard(Event.Keyboard.KeyCode, False);
     end;
   end;
 end;
