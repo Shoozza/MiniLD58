@@ -5,6 +5,7 @@ interface
 uses
   Allegro5,
   al5audio,
+  al5font,
   GameSettings;
 
 const
@@ -18,6 +19,8 @@ var
   Settings: TSettings;
   Queue: ALLEGRO_EVENT_QUEUEptr;
   SpawnSound: ALLEGRO_SAMPLEptr;
+  Display: ALLEGRO_DISPLAYptr;
+  Font: ALLEGRO_FONTptr;
 
 
 implementation
