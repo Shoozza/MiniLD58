@@ -21,6 +21,11 @@ var
   SpawnSound: ALLEGRO_SAMPLEptr;
   Display: ALLEGRO_DISPLAYptr;
   Font: ALLEGRO_FONTptr;
+  BackgroundColor, BackgroundShadeColor,
+    LeftPadColor, LeftPadShadeColor,
+    RightPadColor, RightPadShadeColor: ALLEGRO_COLOR;
+  WallSound, LeftPadSound, RightPadSound,
+    LostSound, PointSound: ALLEGRO_SAMPLEptr;
 
 
 implementation
