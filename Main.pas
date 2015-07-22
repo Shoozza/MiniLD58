@@ -62,7 +62,7 @@ begin
 
   al_clear_to_color(al_map_rgb(164, 164, 164));
   al_flip_display;
-  al_set_window_title(Display, 'MiniLD58 - Theme: "Pong" - Balldr');
+  al_set_window_title(Display, 'rong v0.0.0');
 
   if not al_init_image_addon then
     WriteLn('Error: al_init_image_addon');
